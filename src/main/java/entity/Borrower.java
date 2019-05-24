@@ -9,6 +9,7 @@ public class Borrower {
     @GeneratedValue
     private long id;
 
+    @Column(unique = true)
     private String name;
 
     private String password;

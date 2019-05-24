@@ -7,6 +7,7 @@
     <groupId>aaa</groupId>
     <artifactId>bbb</artifactId>
     <version>1.0-SNAPSHOT</version>
+<!--    <packaging>war</packaging>-->
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -14,6 +15,7 @@
     </properties>
 
     <dependencies>
+        <!-- region Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -36,7 +38,17 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>4.3.24.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
+            <version>4.3.24.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
             <version>4.3.24.RELEASE</version>
         </dependency>
         <dependency>
@@ -45,17 +57,57 @@
             <version>4.3.24.RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <!-- endregion -->
 
+        <!-- region Struts -->
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
             <version>2.5.20</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-spring-plugin</artifactId>
+            <version>2.5.20</version>
+        </dependency>
+        <!-- endregion -->
 
+        <!-- region Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>5.4.2.Final</version>
         </dependency>
+        <!-- endregion -->
+
+        <!-- region Database Connectivity -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+        <!-- endregion -->
+
+        <!-- region JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        <!-- endregion -->
+
+        <!-- region Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- endregion -->
     </dependencies>
 </project>

@@ -8,10 +8,15 @@ import java.util.List;
 public class BookProfile {
     @Id
     private int isbn;
+
     private String name;
+
     private String author;
+
     private String type;
+
     private LocalDate issueOn;
+
     private double price;
 
     @OneToMany
