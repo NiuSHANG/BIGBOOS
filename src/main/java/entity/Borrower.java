@@ -1,22 +1,35 @@
 package entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Borrower {
     @Id
     @GeneratedValue
-    private long id;
+    private Integer id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private BorrowerType type;
 
-    private boolean deleted = false;
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean deleted = false;
 
     @OneToMany
     private List<BookCopy> borrowed;

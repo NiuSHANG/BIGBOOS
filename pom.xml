@@ -14,6 +14,7 @@
         <maven.compiler.target>8</maven.compiler.target>
 
         <version-of-spring>4.3.24.RELEASE</version-of-spring>
+        <version-of-spring-data>1.11.22.RELEASE</version-of-spring-data>
         <version-of-struts>2.5.20</version-of-struts>
         <version-of-hibernate>5.4.2.Final</version-of-hibernate>
         <version-of-mysql-driver>8.0.16</version-of-mysql-driver>
@@ -67,6 +68,14 @@
         </dependency>
         <!-- endregion -->
 
+        <!-- region Spring Data -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${version-of-spring-data}</version>
+        </dependency>
+        <!-- endregion -->
+
         <!-- region Struts -->
         <dependency>
             <groupId>org.apache.struts</groupId>
@@ -95,6 +104,11 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <version>${version-of-hibernate}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
             <version>${version-of-hibernate}</version>
         </dependency>
         <!-- endregion -->
