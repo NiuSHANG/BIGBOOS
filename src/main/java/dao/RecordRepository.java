@@ -16,6 +16,7 @@ import java.util.Optional;
 @Repository
 public interface RecordRepository extends CrudRepository<Record, Integer> {
     Optional<Record> findRecordById(Integer id);
+    Optional<Record> findRecordByBorrowerAndTargetAndUntilIsNull(Borrower borrower, BookCopy target);
 
     List<Record> findRecordsByBorrower(Borrower borrower);
     List<Record> findRecordsByBorrowerId(Integer borrower_id);
