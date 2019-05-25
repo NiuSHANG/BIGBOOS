@@ -61,6 +61,7 @@ public class HibernateConfig {
     }
 
     @Bean
+    @Primary
     public PlatformTransactionManager transactionManager(@Autowired EntityManagerFactory emf) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(emf);

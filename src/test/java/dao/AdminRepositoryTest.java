@@ -2,19 +2,20 @@ package dao;
 
 import config.SpringConfig;
 import entity.Admin;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.transaction.Transactional;
+
+@Transactional
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SpringConfig.class)
 public class AdminRepositoryTest {
+    @Autowired
     private AdminRepository adminRepo;
-
-    @Before
-    public void setUp() {
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfig.class);
-        adminRepo = applicationContext.getBean(AdminRepository.class);
-    }
 
     @Test
     public void test() {
