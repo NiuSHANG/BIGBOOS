@@ -1,9 +1,11 @@
 package dao;
 
 import entity.BookProfile;
+import entity.Borrower;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -15,9 +17,8 @@ public interface BookProfileRepository extends CrudRepository<BookProfile, Integ
     List<BookProfile> findBookProfilesByName(String name);
     List<BookProfile> findBookProfilesByAuthor(String author);
 
-    // TODO
-//    @Query("select p from BookProfile p, Borrower b where b = ? and p.copies in b.borrowed")
-//    List<BookProfile> findBookProfilesByBorrower(Borrower borrower);
+    @Query("select p from BookProfile p where p.copies in (select b.borrowed from Borrower b where b = ?1)")
+    List<BookProfile> findBookProfilesByBorrower(Borrower borrower);
 
     Page<BookProfile> findAll(Pageable pageable);
     List<BookProfile> findAll(Specification specification);
