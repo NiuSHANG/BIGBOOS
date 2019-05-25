@@ -7,14 +7,21 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
+@Transactional
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SpringConfig.class)
 public class AdminServiceTest {
+    @Autowired
     private AdminService adminService;
 
     private LocalDate date = LocalDate.of(2000, 1, 1);
@@ -23,16 +30,12 @@ public class AdminServiceTest {
 
     @Before
     public void setUp() {
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfig.class);
-        adminService = applicationContext.getBean(AdminService.class);
-
         admin = adminService.addAdmin(Admin.builder().name("__test").password("123456").build());
         profile = adminService.addBookProfile(new BookProfile(123456, "__test_profile", "gresstant", "type", date, 1.0, null));
     }
 
     @Test
     public void test() {
-
         Admin login = adminService.login("__test", "123456");
         Assert.assertNotNull(login);
         Assert.assertEquals("__test", login.getName());
@@ -57,7 +60,7 @@ public class AdminServiceTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         adminService.removeAdmin(admin);
         adminService.removeBookProfile(profile);
     }
