@@ -10,27 +10,28 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface RecordRepository extends CrudRepository<Record, Integer> {
     Optional<Record> findRecordById(Integer id);
 
-    Iterable<Record> findRecordsByBorrower(Borrower borrower);
-    Iterable<Record> findRecordsByBorrowerId(Integer borrower_id);
-    Iterable<Record> findRecordsByBorrowerName(String borrower_name);
+    List<Record> findRecordsByBorrower(Borrower borrower);
+    List<Record> findRecordsByBorrowerId(Integer borrower_id);
+    List<Record> findRecordsByBorrowerName(String borrower_name);
 
-    Iterable<Record> findRecordsByTarget(BookCopy target);
-    Iterable<Record> findRecordsByTargetId(Integer borrower_id);
+    List<Record> findRecordsByTarget(BookCopy target);
+    List<Record> findRecordsByTargetId(Integer borrower_id);
 
-    Iterable<Record> findRecordsByTargetProfile(BookProfile target_profile);
-    Iterable<Record> findRecordsByTargetProfileIsbn(Integer target_profile_isbn);
-    Iterable<Record> findRecordsByTargetProfileName(String target_profile_name);
-    Iterable<Record> findRecordsByTargetProfileAuthor(String target_profile_author);
+    List<Record> findRecordsByTargetProfile(BookProfile target_profile);
+    List<Record> findRecordsByTargetProfileIsbn(Integer target_profile_isbn);
+    List<Record> findRecordsByTargetProfileName(String target_profile_name);
+    List<Record> findRecordsByTargetProfileAuthor(String target_profile_author);
 
-    Iterable<Record> findRecordsByUntilIsNull();
+    List<Record> findRecordsByUntilIsNull();
 
     Page<Record> findAll(Pageable pageable);
-    Iterable<Record> findAll(Specification specification);
+    List<Record> findAll(Specification specification);
     Page<Record> findAll(Specification specification, Pageable pageable);
 }

@@ -9,25 +9,26 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BookCopyRepository extends CrudRepository<BookCopy, Integer> {
     Optional<BookCopy> findBookCopyById(Integer id);
 
-    Iterable<BookCopy> findBookCopiesByProfile(BookProfile profile);
-    Iterable<BookCopy> findBookCopiesByProfileIsbn(Integer profile_isbn);
-    Iterable<BookCopy> findBookCopiesByProfileName(String profile_name);
-    Iterable<BookCopy> findBookCopiesByProfileAuthor(String profile_author);
+    List<BookCopy> findBookCopiesByProfile(BookProfile profile);
+    List<BookCopy> findBookCopiesByProfileIsbn(Integer profile_isbn);
+    List<BookCopy> findBookCopiesByProfileName(String profile_name);
+    List<BookCopy> findBookCopiesByProfileAuthor(String profile_author);
 
-    Iterable<BookCopy> findBookCopiesByBorrower(Borrower borrower);
-    Iterable<BookCopy> findBookCopiesByBorrowerId(Integer borrower_id);
-    Iterable<BookCopy> findBookCopiesByBorrowerName(String borrower_name);
+    List<BookCopy> findBookCopiesByBorrower(Borrower borrower);
+    List<BookCopy> findBookCopiesByBorrowerId(Integer borrower_id);
+    List<BookCopy> findBookCopiesByBorrowerName(String borrower_name);
 
-    Iterable<BookCopy> findBookCopiesByBorrowerIsNull();
-    Iterable<BookCopy> findBookCopiesByBorrowerIsNotNull();
+    List<BookCopy> findBookCopiesByBorrowerIsNull();
+    List<BookCopy> findBookCopiesByBorrowerIsNotNull();
 
     Page<BookCopy> findAll(Pageable pageable);
-    Iterable<BookCopy> findAll(Specification specification);
+    List<BookCopy> findAll(Specification specification);
     Page<BookCopy> findAll(Specification specification, Pageable pageable);
 }
