@@ -1,9 +1,6 @@
 package service;
 
-import dao.AdminRepository;
-import dao.BookCopyRepository;
-import dao.BookProfileRepository;
-import dao.BorrowerRepository;
+import dao.*;
 import entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     BorrowerRepository borrowerRepo;
 
+    @Autowired
+    RecordRepository recordRepo;
+
     @Override
     public Borrower findUser(int id) {
         return borrowerRepo.findBorrowerById(id).orElse(null);
@@ -43,12 +43,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<BookProfile> findBookByCriteria(Map<String, Object> criteria) {
-        return null; // TODO
+        return bookProfileRepo.findAll(ServiceUtils.convertMapToSpec(criteria));
     }
 
     @Override
     public List<Record> findRecordByCriteria(Map<String, Object> criteria) {
-        return null; // TODO
+        return recordRepo.findAll(ServiceUtils.convertMapToSpec(criteria));
     }
 
     @Override

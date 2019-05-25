@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BookProfileRepository extends CrudRepository<BookProfile, Integer> {
@@ -19,6 +20,6 @@ public interface BookProfileRepository extends CrudRepository<BookProfile, Integ
 //    Iterable<BookProfile> findBookProfilesByBorrower(Borrower borrower);
 
     Page<BookProfile> findAll(Pageable pageable);
-    Iterable<BookProfile> findAll(Specification specification);
+    List<BookProfile> findAll(Specification specification);
     Page<BookProfile> findAll(Specification specification, Pageable pageable);
 }

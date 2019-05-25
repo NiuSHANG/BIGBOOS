@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,6 +32,6 @@ public interface RecordRepository extends CrudRepository<Record, Integer> {
     Iterable<Record> findRecordsByUntilIsNull();
 
     Page<Record> findAll(Pageable pageable);
-    Iterable<Record> findAll(Specification specification);
+    List<Record> findAll(Specification specification);
     Page<Record> findAll(Specification specification, Pageable pageable);
 }
