@@ -38,6 +38,7 @@
         <version-of-commons-dbcp2>2.6.0</version-of-commons-dbcp2>
         <version-of-junit>4.12</version-of-junit>
         <version-of-lombok>1.18.8</version-of-lombok>
+        <version-of-slf4j>1.7.26</version-of-slf4j>
     </properties>
 
     <dependencies>
@@ -201,6 +202,29 @@
             <groupId>javax.servlet.jsp.jstl</groupId>
             <artifactId>javax.servlet.jsp.jstl-api</artifactId>
             <version>1.2.2</version>
+        </dependency>
+        <!-- endregion -->
+
+        <!-- region Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version-of-slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version-of-slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${version-of-slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${version-of-slf4j}</version>
         </dependency>
         <!-- endregion -->
     </dependencies>
