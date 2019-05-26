@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -18,6 +19,7 @@ import java.util.*;
 @Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfig.class)
+@ActiveProfiles("test")
 public class AdminServiceTest {
     @Autowired
     private AdminService adminService;
@@ -59,7 +61,7 @@ public class AdminServiceTest {
                     .name("profiles_" + random.nextInt())
                     .author("author_type" + i % 2)
                     .type("type_" + i % 2)
-                    .issueOn(LocalDate.ofEpochDay(random.nextLong()))
+                    .issueOn(LocalDate.ofEpochDay(random.nextInt()))
                     .price(random.nextDouble() * 100).build();
             profiles.add(p);
 

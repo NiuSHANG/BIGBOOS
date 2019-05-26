@@ -2,9 +2,11 @@ package config;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -25,6 +27,7 @@ import java.util.Properties;
 @EnableJpaRepositories(basePackages = "dao")
 public class HibernateConfig {
     @Bean
+    @Profile("!test")
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -34,7 +37,9 @@ public class HibernateConfig {
         return dataSource;
     }
 
-    private Properties hibernateProperties() {
+    @Bean("hibernateProperties")
+    @Profile("!test")
+    public Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty("hibernate.hibernate.hbm2ddl.auto", "update");
         hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
@@ -45,18 +50,20 @@ public class HibernateConfig {
     }
 
     @Bean
-    public LocalSessionFactoryBean sessionFactory(@Autowired DataSource dataSource) {
+    public LocalSessionFactoryBean sessionFactory(@Autowired DataSource dataSource,
+                                                  @Autowired @Qualifier("hibernateProperties") Properties hibernateProps) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
         sessionFactory.setPackagesToScan("entity");
-        sessionFactory.setHibernateProperties(hibernateProperties());
+        sessionFactory.setHibernateProperties(hibernateProps);
         return sessionFactory;
     }
 
     @Bean
-    public HibernateTransactionManager hibernateTransactionManager(@Autowired DataSource dataSource) {
+    public HibernateTransactionManager hibernateTransactionManager(@Autowired DataSource dataSource,
+                                                                   @Autowired @Qualifier("hibernateProperties") Properties hibernateProps) {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory(dataSource).getObject());
+        transactionManager.setSessionFactory(sessionFactory(dataSource, hibernateProps).getObject());
         return transactionManager;
     }
 
@@ -75,14 +82,15 @@ public class HibernateConfig {
 
     @Bean
     @Primary
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Autowired DataSource dataSource) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Autowired DataSource dataSource,
+                                                                       @Autowired @Qualifier("hibernateProperties") Properties hibernateProps) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
         em.setPackagesToScan("entity");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
-        em.setJpaProperties(hibernateProperties());
+        em.setJpaProperties(hibernateProps);
 
         return em;
     }
