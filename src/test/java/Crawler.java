@@ -34,7 +34,7 @@ public class Crawler {
                 .map(Element::text)
                 .filter(s -> s.trim().contains("国际标准书号ISBN："))
                 .map(s -> s.substring(s.length() - 13))
-                .map(Integer::parseInt)
+                .map(Long::parseLong)
                 .findFirst()
                 .ifPresent(out::setIsbn);
         if (out.getIsbn() == null) {
@@ -43,7 +43,10 @@ public class Crawler {
         }
 
         // name
-        out.setName(document.getElementById("product_info").getElementsByTag("h1").first().text());
+        out.setName(body.getElementById("product_info").getElementsByTag("h1").first().text());
+
+        // summary
+        out.setSummary(body.getElementsByClass("head_title_name").first().text());
 
         // author
         out.setAuthor(body.getElementById("author").children().last().text());
@@ -59,7 +62,7 @@ public class Crawler {
                 .findFirst()
                 .ifPresent(str -> {
                     String[] split = str.substring(5).trim().split("[年月]");
-                    if (split.length < 3) return;
+                    if (split.length < 2) return;
                     out.setIssueOn(LocalDate.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]), 1));
                 });
 
