@@ -1,31 +1,45 @@
+import config.SpringConfig;
+import dao.BookProfileRepository;
 import entity.BookProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
 public class Crawler {
-    public static void main(String[] args) throws IOException {
+    private static ApplicationContext applicationContext;
+
+    public static void main(String[] args) {
         System.out.println("========================================");
         System.out.println("       Crawler of Library Manager       ");
         System.out.println("   as a component of the Final Handout  ");
         System.out.println("========================================");
-        System.out.println();
+        System.out.println("Initializing ...");
+        applicationContext = new AnnotationConfigApplicationContext(SpringConfig.class);
+        System.out.println("========================================");
         System.out.println("Input a number or url to convert it to BookProfile and store it temporarily.");
+        System.out.println("Input \"page [full url]\" (without quotes) to get all links, " +
+                                        "and select those usable to convert to BookProfiles and store.");
         System.out.println("Input \"show\" (without quotes) to list all stored BookProfiles.");
         System.out.println("Input \"insert\" (without quotes) to add all stored BookProfiles to the database " +
                                         "(will establish a connection if there isn't any available).");
         System.out.println("Input \"exit\" (without quotes) to exit.");
+        System.out.println("BookProfile with duplicated isbn will replace the old one.");
         System.out.println("========================================");
-        System.out.println("Please begin your performance. (๑•̀ㅂ•́)و✧");
+        System.out.println("Enjoy it! (゜-゜)つロ");
+        System.out.println("========================================");
 
         Scanner sc = new Scanner(System.in);
         while (sc.hasNextLine()) {
@@ -35,26 +49,47 @@ public class Crawler {
     }
 
     private static class CLI {
-        private static List<BookProfile> books = new LinkedList<>();
+        private static Map<Long, BookProfile> books = new TreeMap<>();
 
-        public static boolean process(String input) {
+        static boolean process(String input) {
             try {
                 if (input == null) {
                     System.out.println("`input` can't be null!");
                 } else if (input.equals("show")) {
-                    books.forEach(System.out::println);
+                    books.forEach((k, v) -> System.out.println(String.format("%13d: %s", k, v.toString())));
+                    System.out.println("Count: " + books.size());
                 } else if (input.equals("insert")) {
-                    System.out.println("Not implemented."); // TODO
+                    System.out.println("Saving ...");
+                    BookProfileRepository profileRepo = applicationContext.getBean(BookProfileRepository.class);
+                    profileRepo.save(books.values());
+                    System.out.println("Done.");
                 } else if (input.equals("exit")) {
                     System.out.println("Exiting...");
                     return false; // terminate the program
+                } else if (input.startsWith("page ")) {
+                    String url = input.substring("page ".length());
+                    System.out.println("Parsing page [" + url + "] ...");
+                    List<String> urls = parseListPage(url);
+                    System.out.println(urls.size());
+                    for (String s : urls) {
+                        try {
+                            System.out.println("Trying [" + s + "] ...");
+                            BookProfile profile = toBookProfile(s);
+                            books.put(profile.getIsbn(), profile);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    System.out.println("Finished.");
                 } else {
                     if (input.trim().matches("-?\\d+(\\.\\d+)?")) {
-                        System.out.println("Trying to add a BookProfile to temp list by id ...");
-                        books.add(toBookProfile(Integer.parseInt(input)));
-                    } else if (input.trim().matches("^https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
-                        System.out.println("Trying to add a BookProfile to temp list by url ...");
-                        books.add(toBookProfile(input));
+                        System.out.println("Trying to add a BookProfile by id [" + input + "] ...");
+                        BookProfile profile = toBookProfile(Integer.parseInt(input));
+                        books.put(profile.getIsbn(), profile);
+                    } else if (isUri(input)) {
+                        System.out.println("Trying to add a BookProfile by url [" + input + "]...");
+                        BookProfile profile = toBookProfile(input);
+                        books.put(profile.getIsbn(), profile);
                     } else {
                         System.out.println("Doesn't understand.");
                     }
@@ -65,6 +100,19 @@ public class Crawler {
 
             return true; // allow next input
         }
+
+        private static boolean isUri(String input) {
+            return input.trim().matches("^https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+        }
+    }
+
+    private static List<String> parseListPage(String page) throws IOException {
+        return Jsoup.connect(page).get().getElementsByTag("a")
+                .stream()
+                .map(a -> a.attr("href"))
+                .filter(s -> s.matches("https?://product.dangdang.com/(\\d+).html"))
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private static BookProfile toBookProfile(int id) throws IOException {
@@ -72,7 +120,7 @@ public class Crawler {
     }
 
     private static BookProfile toBookProfile(String url) throws IOException {
-        BookProfile out = toBookProfile(Jsoup.connect(url).get());
+        BookProfile out = toBookProfile(Jsoup.connect(url).timeout(1000).get());
         if (out == null) log.error("`null` while url == \"" + url + "\".");
         return out;
     }
