@@ -19,10 +19,13 @@ import java.util.List;
 @Entity
 public class BookProfile {
     @Id
-    private Integer isbn;
+    private Long isbn;
 
     @Column(nullable = false)
     private String name;
+
+    @Column
+    private String summary;
 
     @Column(nullable = false)
     private String author;

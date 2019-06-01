@@ -34,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public BookProfile findBookProfile(int isbn) {
+    public BookProfile findBookProfile(long isbn) {
         return bookProfileRepo.findBookProfileByIsbn(isbn).orElse(null);
     }
 

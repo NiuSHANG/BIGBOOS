@@ -11,8 +11,8 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookProfileRepository extends CrudRepository<BookProfile, Integer> {
-    Optional<BookProfile> findBookProfileByIsbn(Integer isbn);
+public interface BookProfileRepository extends CrudRepository<BookProfile, Long> {
+    Optional<BookProfile> findBookProfileByIsbn(Long isbn);
 
     List<BookProfile> findBookProfilesByName(String name);
     List<BookProfile> findBookProfilesByAuthor(String author);

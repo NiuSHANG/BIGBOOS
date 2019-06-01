@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface AdminService {
     Borrower findUser(int id);
-    BookProfile findBookProfile(int isbn);
+    BookProfile findBookProfile(long isbn);
     BookCopy findBookCopy(int id);
 
     List<BookProfile> findBookByCriteria(Map<String, Object> criteria);
