@@ -31,6 +31,9 @@ public class Borrower {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    @OneToMany
+    @OneToMany(mappedBy = "borrower")
     private List<BookCopy> borrowed;
+
+    @OneToMany(mappedBy = "borrower")
+    private List<Record> records;
 }
