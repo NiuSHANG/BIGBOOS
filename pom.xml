@@ -233,5 +233,14 @@
             <version>${version-of-slf4j}</version>
         </dependency>
         <!-- endregion -->
+
+        <!-- region JSoup (for populating database) -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.12.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- endregion -->
     </dependencies>
 </project>
