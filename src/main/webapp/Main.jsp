@@ -1,23 +1,20 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Gresstant
-  Date: 2019/5/24
-  Time: 20:30
+  User: ZZU
+  Date: 2019/6/1
+  Time: 15:49
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
-
 <html>
 <head>
     <title>Title</title>
 </head>
 <body>
-<h1>It works!</h1>
-<form action="BorrowerLogIn" method="post">
-    <input type="text" name="username"/>
+<form action="BorrowerUpdate">
     <input type="text" name="password"/>
-    <input type="submit" valu="submit"/>
+    <input type="submit" value="submit"/>
 </form>
 </body>
 </html>

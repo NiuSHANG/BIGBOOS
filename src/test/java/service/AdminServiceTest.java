@@ -25,12 +25,13 @@ public class AdminServiceTest {
     private AdminService adminService;
 
     private static Admin admin = Admin.builder().name("__test").password("123456").build();
-    private static BookProfile profile = new BookProfile(123456, "__test_profile", "gresstant", "type", LocalDate.of(2000, 1, 1), 1.0, null);
+    private static BookProfile profile = BookProfile.builder().isbn(123456L).name("__test_profile").author("gresstant")
+            .type("type").issueOn(LocalDate.of(2000, 1, 1)).price(1.0).build();
 
     private static List<Admin> admins = new LinkedList<>();
     private static List<Borrower> users = new LinkedList<>();
     private static List<BookProfile> profiles = new LinkedList<>();
-    private static Map<Integer, List<BookCopy>> bookCopies = new TreeMap<>(); // key is bookProfile.id
+    private static Map<Long, List<BookCopy>> bookCopies = new TreeMap<>(); // key is bookProfile.id
 
     static {
         Random random = new Random();
@@ -50,9 +51,9 @@ public class AdminServiceTest {
 
         // region profiles & bookCopies
         int profileSize = random.nextInt(20);
-        Set<Integer> isbnSet = new TreeSet<>();
+        Set<Long> isbnSet = new TreeSet<>();
         for (int i = 0; i < profileSize; i++) {
-            int isbn = random.nextInt();
+            long isbn = random.nextLong();
             while (isbnSet.contains(isbn)) // to avoid duplicate isbn
                 isbn = random.nextInt();
             isbnSet.add(isbn);
