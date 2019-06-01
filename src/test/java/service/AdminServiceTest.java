@@ -25,7 +25,8 @@ public class AdminServiceTest {
     private AdminService adminService;
 
     private static Admin admin = Admin.builder().name("__test").password("123456").build();
-    private static BookProfile profile = new BookProfile(123456L, "__test_profile", null, "gresstant", "type", LocalDate.of(2000, 1, 1), 1.0, null);
+    private static BookProfile profile = BookProfile.builder().isbn(123456L).name("__test_profile").author("gresstant")
+            .type("type").issueOn(LocalDate.of(2000, 1, 1)).price(1.0).build();
 
     private static List<Admin> admins = new LinkedList<>();
     private static List<Borrower> users = new LinkedList<>();

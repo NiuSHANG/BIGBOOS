@@ -39,6 +39,9 @@ public class BookProfile {
     @Column(nullable = false)
     private Double price;
 
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     private List<BookCopy> copies;
+
+    @OneToMany(mappedBy = "target")
+    private List<Record> records;
 }
