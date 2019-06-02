@@ -110,7 +110,7 @@ public class Crawler {
         return Jsoup.connect(page).get().getElementsByTag("a")
                 .stream()
                 .map(a -> a.attr("href"))
-                .filter(s -> s.matches("https?://product.dangdang.com/(\\d+).html"))
+                .filter(s -> s.matches("https?://product\\.dangdang\\.com/(\\d+)\\.html"))
                 .distinct()
                 .collect(Collectors.toList());
     }
