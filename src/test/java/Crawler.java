@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -134,7 +135,7 @@ public class Crawler {
                 .stream()
                 .map(Element::text)
                 .filter(s -> s.trim().contains("国际标准书号ISBN："))
-                .map(s -> s.substring(s.length() - 13))
+                .map(s -> s.substring(s.indexOf('：') + 1))
                 .map(Long::parseLong)
                 .findFirst()
                 .ifPresent(out::setIsbn);
@@ -153,7 +154,14 @@ public class Crawler {
         out.setAuthor(body.getElementById("author").children().last().text());
 
         // type
-        out.setType(body.getElementById("breadcrumb").getElementsByTag("a").get(1).text());
+        {
+            Elements breadcrumbLinks = body.getElementById("breadcrumb").getElementsByTag("a");
+            if (!breadcrumbLinks.first().text().trim().equals("图书")) {
+                log.error("Not a book! Type [" + breadcrumbLinks.first().text().trim() + "] scanned.");
+                return null;
+            }
+            out.setType(breadcrumbLinks.get(1).text());
+        }
 
         // issueOn
         body.getElementById("product_info").getElementsByClass("messbox_info")
