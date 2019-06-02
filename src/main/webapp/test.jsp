@@ -14,7 +14,7 @@
 </head>
 <body>
 <h1>It works!</h1>
-<form action="BorrowerLogIn" method="post">
+<form action="AddAdmin" method="post">
     <input type="text" name="username"/>
     <input type="text" name="password"/>
     <input type="submit" valu="submit"/>
