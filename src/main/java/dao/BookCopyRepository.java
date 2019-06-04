@@ -17,7 +17,7 @@ public interface BookCopyRepository extends CrudRepository<BookCopy, Integer> {
     Optional<BookCopy> findBookCopyById(Integer id);
 
     List<BookCopy> findBookCopiesByProfile(BookProfile profile);
-    List<BookCopy> findBookCopiesByProfileIsbn(Integer profile_isbn);
+    List<BookCopy> findBookCopiesByProfileIsbn(Long profile_isbn);
     List<BookCopy> findBookCopiesByProfileName(String profile_name);
     List<BookCopy> findBookCopiesByProfileAuthor(String profile_author);
 

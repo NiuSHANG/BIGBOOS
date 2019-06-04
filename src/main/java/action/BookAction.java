@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @Namespace("/")
 @Data
 public class BookAction extends ActionSupport {
-    private int id;
+    private long id;
     private String bookname;
     private String author;
     private String type;
