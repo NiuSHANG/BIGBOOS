@@ -2,15 +2,21 @@ package service;
 
 import dao.*;
 import entity.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional
 public class AdminServiceImpl implements AdminService {
@@ -121,19 +127,53 @@ public class AdminServiceImpl implements AdminService {
         return bookProfileRepo.save(profile);
     }
 
+    private static final Path USER_DIR;
+    private static final Path COVER_IMG_DIR;
+
+    static {
+        String appDataFolder = Optional.ofNullable(System.getenv("APPDATA")).orElse(System.getenv("XDG_DATA_HOME"));
+        if (appDataFolder == null)
+            throw new RuntimeException("Cannot access app data folder! " +
+                                       "Consider executing as admin (Windows) or super user (Linux).");
+
+        USER_DIR = Paths.get(appDataFolder, "YCFJ");
+        COVER_IMG_DIR = USER_DIR.resolve("upload").resolve("coverImg");
+
+        for (Path path : new Path[] {USER_DIR, COVER_IMG_DIR}) {
+            if (!path.toFile().isDirectory() && !path.toFile().mkdir())
+                throw new RuntimeException("Unable to create resource folder!");
+        }
+    }
+
     @Override
     public BufferedImage getCoverImage(long isbn) {
-        return null; // TODO
+        try {
+            return ImageIO.read(COVER_IMG_DIR.resolve(isbn + ".png").toFile());
+        } catch (Exception ex) {
+            log.error("getCoverImage, isbn = " + isbn, ex);
+            return null;
+        }
     }
 
     @Override
     public boolean putCoverImage(long isbn, BufferedImage image) {
-        return false; // TODO
+        try {
+            return ImageIO.write(image, "png", COVER_IMG_DIR.resolve(isbn + ".png").toFile());
+        } catch (Exception ex) {
+            log.error("putCoverImage, isbn = " + isbn, ex);
+            return false;
+        }
     }
 
     @Override
     public boolean removeCoverImage(long isbn) {
-        return false; // TODO
+        try {
+            File target = COVER_IMG_DIR.resolve(isbn + ".png").toFile();
+            return !target.exists() || target.delete();
+        } catch (Exception ex) {
+            log.error("removeCoverImage, isbn = " + isbn, ex);
+            return false;
+        }
     }
 
     @Override
