@@ -2,6 +2,7 @@ package service;
 
 import entity.*;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,10 @@ public interface AdminService {
     Borrower updateUser(Borrower user);
     BookProfile updateBookProfile(BookProfile profile);
     BookCopy updateBookCopy(BookCopy copy);
+
+    BufferedImage getCoverImage(long isbn);
+    boolean putCoverImage(long isbn, BufferedImage image);
+    boolean removeCoverImage(long isbn);
 
     Admin login(String username, String password);
 }

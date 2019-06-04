@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -119,6 +120,21 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public BookCopy updateBookCopy(BookCopy copy) {
         return bookCopyRepo.save(copy);
+    }
+
+    @Override
+    public BufferedImage getCoverImage(long isbn) {
+        return null; // TODO
+    }
+
+    @Override
+    public boolean putCoverImage(long isbn, BufferedImage image) {
+        return false; // TODO
+    }
+
+    @Override
+    public boolean removeCoverImage(long isbn) {
+        return false; // TODO
     }
 
     @Override
