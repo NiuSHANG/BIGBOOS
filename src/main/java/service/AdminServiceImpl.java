@@ -33,6 +33,10 @@ public class AdminServiceImpl implements AdminService {
     public Borrower findUser(int id) {
         return borrowerRepo.findBorrowerById(id).orElse(null);
     }
+    @Override
+    public Admin findAdmin(int id) {
+        return adminRepo.findAdminById(id).orElse(null);
+    }
 
     @Override
     public BookProfile findBookProfile(long isbn) {
@@ -115,11 +119,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public BookProfile updateBookProfile(BookProfile profile) {
         return bookProfileRepo.save(profile);
-    }
-
-    @Override
-    public BookCopy updateBookCopy(BookCopy copy) {
-        return bookCopyRepo.save(copy);
     }
 
     @Override

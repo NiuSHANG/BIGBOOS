@@ -46,12 +46,11 @@ public class BorrowerAction extends ActionSupport {
     public String UserRegister(){
         Borrower build = Borrower.builder().name(username).password(password).type(type).build();
         if(asi.addUser(build) == null){
-            addActionError("ç”¨æˆ·åå·²å­˜åœ¨ï¼Œè¯·é‡æ–°è¾“å…¥ç”¨æˆ·åã€‚");
+            addActionError("ÓÃ»§ÃûÒÑ´æÔÚ£¬ÇëÖØĞÂÊäÈëÓÃ»§Ãû¡£");
             return "fall";
         }else {
             return "success";
         }
-
     }
 
 
@@ -61,7 +60,7 @@ public class BorrowerAction extends ActionSupport {
                     @Result(name = "fall", type = "dispatcher", location = "/BorrowerLogIn.jsp" )})
     public String UserLogIn(){
         if(usi.login(username,password) == null){
-            addActionError("ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥ã€‚");
+            addActionError("ÓÃ»§Ãû»òÃÜÂë´íÎó£¬ÇëÖØĞÂÊäÈë¡£");
             return "fall";
         }else{
             borrower = usi.login(username,password);

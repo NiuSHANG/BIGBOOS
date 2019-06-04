@@ -12,7 +12,7 @@
     <title>Title</title>
 </head>
 <body>
-<form action="BorrowerUpdate">
+<form action="AdminLogin">
     <input type="text" name="password"/>
     <input type="submit" value="submit"/>
 </form>
