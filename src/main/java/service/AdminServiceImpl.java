@@ -140,7 +140,7 @@ public class AdminServiceImpl implements AdminService {
         COVER_IMG_DIR = USER_DIR.resolve("upload").resolve("coverImg");
 
         for (Path path : new Path[] {USER_DIR, COVER_IMG_DIR}) {
-            if (!path.toFile().isDirectory() && !path.toFile().mkdir())
+            if (!path.toFile().isDirectory() && !path.toFile().mkdirs())
                 throw new RuntimeException("Unable to create resource folder!");
         }
     }
