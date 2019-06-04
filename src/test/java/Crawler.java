@@ -1,6 +1,9 @@
 import config.SpringConfig;
 import dao.BookProfileRepository;
 import entity.BookProfile;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,8 +11,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import service.AdminService;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -50,19 +56,30 @@ public class Crawler {
     }
 
     private static class CLI {
-        private static Map<Long, BookProfile> books = new TreeMap<>();
+        private static Map<Long, Pair<BookProfile, String>> records = new TreeMap<>();
 
         static boolean process(String input) {
             try {
                 if (input == null) {
                     System.out.println("`input` can't be null!");
                 } else if (input.equals("show")) {
-                    books.forEach((k, v) -> System.out.println(String.format("%13d: %s", k, v.toString())));
-                    System.out.println("Count: " + books.size());
+                    records.forEach((k, v) -> System.out.println(String.format("%13d: %s", k, v.toString())));
+                    System.out.println("Count: " + records.size());
                 } else if (input.equals("insert")) {
                     System.out.println("Saving ...");
                     BookProfileRepository profileRepo = applicationContext.getBean(BookProfileRepository.class);
-                    profileRepo.save(books.values());
+                    AdminService adminService = applicationContext.getBean(AdminService.class);
+                    records.values().forEach(v -> {
+                        profileRepo.save(v.getLeft());
+                        try {
+                            if (!adminService.putCoverImage(v.getLeft().getIsbn(), ImageIO.read(new URL(v.getRight()).openStream())))
+                                throw new RuntimeException("Don't care about this.");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            System.out.println("Failed to save cover image for [" + v.getLeft().getIsbn() + "], url is [" + v.getRight() + "].");
+                        }
+                    });
+
                     System.out.println("Done.");
                 } else if (input.equals("exit")) {
                     System.out.println("Exiting...");
@@ -75,8 +92,8 @@ public class Crawler {
                     for (String s : urls) {
                         try {
                             System.out.println("Trying [" + s + "] ...");
-                            BookProfile profile = toBookProfile(s);
-                            books.put(profile.getIsbn(), profile);
+                            Pair<BookProfile, String> profile = toBookProfile(s);
+                            records.put(profile.getLeft().getIsbn(), profile);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -85,12 +102,12 @@ public class Crawler {
                 } else {
                     if (input.trim().matches("-?\\d+(\\.\\d+)?")) {
                         System.out.println("Trying to add a BookProfile by id [" + input + "] ...");
-                        BookProfile profile = toBookProfile(Integer.parseInt(input));
-                        books.put(profile.getIsbn(), profile);
+                        Pair<BookProfile, String> profile = toBookProfile(Integer.parseInt(input));
+                        records.put(profile.getLeft().getIsbn(), profile);
                     } else if (isUri(input)) {
                         System.out.println("Trying to add a BookProfile by url [" + input + "]...");
-                        BookProfile profile = toBookProfile(input);
-                        books.put(profile.getIsbn(), profile);
+                        Pair<BookProfile, String> profile = toBookProfile(input);
+                        records.put(profile.getLeft().getIsbn(), profile);
                     } else {
                         System.out.println("Doesn't understand.");
                     }
@@ -116,17 +133,17 @@ public class Crawler {
                 .collect(Collectors.toList());
     }
 
-    private static BookProfile toBookProfile(int id) throws IOException {
+    private static Pair<BookProfile, String> toBookProfile(int id) throws IOException {
         return toBookProfile(String.format("http://product.dangdang.com/%d.html", id));
     }
 
-    private static BookProfile toBookProfile(String url) throws IOException {
-        BookProfile out = toBookProfile(Jsoup.connect(url).timeout(1000).get());
+    private static Pair<BookProfile, String> toBookProfile(String url) throws IOException {
+        Pair<BookProfile, String> out = toBookProfile(Jsoup.connect(url).timeout(1000).get());
         if (out == null) log.error("`null` while url == \"" + url + "\".");
         return out;
     }
 
-    private static BookProfile toBookProfile(Document document) {
+    private static Pair<BookProfile, String> toBookProfile(Document document) {
         BookProfile out = new BookProfile();
         Element body = document.body();
 
@@ -185,6 +202,17 @@ public class Crawler {
               .mapToDouble(Double::parseDouble)
               .forEach(out::setPrice);
 
-        return out;
+        // cover image
+        String coverImg = body.getElementById("main-img-slider").getElementsByTag("a").first().attr("data-imghref");
+
+        return new Pair<>(out, coverImg);
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class Pair<K, V> {
+        private K left;
+        private V right;
     }
 }
