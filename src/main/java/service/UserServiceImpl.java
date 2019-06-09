@@ -11,11 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -70,12 +71,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Record borrow(Borrower user, BookCopy copy) {
+        Objects.requireNonNull(user);
+        Objects.requireNonNull(copy);
+
         if (copy.getBorrower() != null) return null;
 
         copy.setBorrower(user);
         bookCopyRepo.save(copy);
         return recordRepo.save(Record.builder().borrower(user).target(copy)
-                .since(Instant.now()).deadline(LocalDate.now().plus(Duration.ofDays(60))).build());
+                .since(Instant.now()).deadline(LocalDate.now().plus(Period.ofDays(60))).build());
     }
 
     @Override
