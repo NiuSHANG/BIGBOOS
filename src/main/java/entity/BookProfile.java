@@ -44,4 +44,9 @@ public class BookProfile {
 
     @OneToMany(mappedBy = "target")
     private List<Record> records;
+
+    @Override
+    public String toString() {
+        return ""; // TODO temp fix
+    }
 }

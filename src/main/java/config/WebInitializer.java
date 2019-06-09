@@ -1,7 +1,7 @@
 package config;
 
 import org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter;
-import org.springframework.orm.hibernate5.support.OpenSessionInViewFilter;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -13,8 +13,8 @@ public class WebInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         // Hibernate LAZY
-        FilterRegistration h = servletContext.addFilter("hibernateLazyInit", OpenSessionInViewFilter.class);
-        h.setInitParameter("singleSession", "true");
+        FilterRegistration h = servletContext.addFilter("lazyInit", OpenEntityManagerInViewFilter.class);
+//        h.setInitParameter("singleSession", "true");
         h.addMappingForUrlPatterns(null, false, "/*");
 
         // Struts 2
