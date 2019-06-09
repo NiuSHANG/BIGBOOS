@@ -29,10 +29,12 @@ public class BorrowerAction extends ActionSupport {
     private Record record;
     private String username;
     private String password;
+    private int userid;
     private BorrowerType type;
+    private List<Record> records;
+
     ActionContext ac = ActionContext.getContext();
     Map<String,Object> sess = ac.getSession();
-    private int someoneId;
 
     @Autowired
     AdminService asi;
@@ -46,9 +48,10 @@ public class BorrowerAction extends ActionSupport {
     public String UserRegister(){
         Borrower build = Borrower.builder().name(username).password(password).type(type).build();
         if(asi.addUser(build) == null){
-            addActionError("ÓÃ»§ÃûÒÑ´æÔÚ£¬ÇëÖØĞÂÊäÈëÓÃ»§Ãû¡£");
+            addActionError("ç”¨æˆ·åå·²å­˜åœ¨ï¼Œè¯·é‡æ–°è¾“å…¥ã€‚");
             return "fall";
         }else {
+            asi.addUser(build);
             return "success";
         }
     }
@@ -56,11 +59,11 @@ public class BorrowerAction extends ActionSupport {
 
     //ç”¨æˆ·ç™»å…¥
     @Action(value = "BorrowerLogIn",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Main.jsp" ),
+            results = {@Result(name = "success", type = "dispatcher", location = "/MainFirst.jsp" ),
                     @Result(name = "fall", type = "dispatcher", location = "/BorrowerLogIn.jsp" )})
     public String UserLogIn(){
         if(usi.login(username,password) == null){
-            addActionError("ÓÃ»§Ãû»òÃÜÂë´íÎó£¬ÇëÖØĞÂÊäÈë¡£");
+            addActionError("ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥ã€‚");
             return "fall";
         }else{
             borrower = usi.login(username,password);
@@ -72,7 +75,7 @@ public class BorrowerAction extends ActionSupport {
 
     //ç”¨æˆ·ç™»å‡º
     @Action(value = "BorrowerLogOut",
-            results = @Result(name = "success", type = "dispatcher", location = "/First.jsp" ))
+            results = @Result(name = "success", type = "dispatcher", location = "/BorrowerLogIn.jsp" ))
     public String UserLogOut(){
         sess.clear();
         return "success";
@@ -94,8 +97,8 @@ public class BorrowerAction extends ActionSupport {
 
     //ç”¨æˆ·å€Ÿä¹¦(not test)
     @Action(value = "BorrowBook",
-            results = {@Result(name = "success", type = "dispatcher", location = "/BorrowBookSuccess.jsp"),
-                    @Result(name = "fall", type = "dispatcher", location = "/BorrowBookFall.jsp")})
+            results = {@Result(name = "success", type = "dispatcher", location = "/BorrowBookInformation.jsp"),
+                    @Result(name = "fall", type = "dispatcher", location = "/BorrowBookInformation.jsp")})
     public String BorrowBook(){
         int uid = (int)sess.get("userid");
         if(asi.findUser(uid).getType() == STUDENT){
@@ -104,6 +107,8 @@ public class BorrowerAction extends ActionSupport {
                 return "fall";
             }else {
                 usi.borrow(asi.findUser(uid),asi.findBookCopy((int)ac.get("bookid")));
+                addActionMessage("å€Ÿé˜…æˆåŠŸã€‚");
+                //é“¾æ¥ç½‘é¡µä¼ å€¼ï¼šbookidã€‚
                 return "success";
             }
         }else{
@@ -112,6 +117,7 @@ public class BorrowerAction extends ActionSupport {
                 return "fall";
             }else {
                 usi.borrow(asi.findUser(uid),asi.findBookCopy((int)ac.get("bookid")));
+                //é“¾æ¥ç½‘é¡µä¼ å€¼ï¼šbookidã€‚
                 return "success";
             }
         }
@@ -123,19 +129,17 @@ public class BorrowerAction extends ActionSupport {
             results = @Result(name = "success", type = "dispatcher", location = "/ReturnBookSuccess.jsp"))
     public String ReturnBook(){
         usi.returnBack(asi.findUser((int)sess.get("userid")),asi.findBookCopy((int)ac.get("bookid")));
+        //é“¾æ¥ç½‘é¡µä¼ å€¼ï¼šbookidã€‚
         return "success";
     }
 
 
     //ç”¨æˆ·å€Ÿä¹¦è®°å½•(not test)
-    @Action(value = "FindMyRecord",
+    @Action(value = "MyRecord",
             results = @Result(name = "success", type = "dispatcher", location = "/MyRecord.jsp"))
-    public String MyRecord(){
-        List<Record> myRecord = usi.findRecordOfSomeone((int)sess.get("userid"));
-        for(int i=0;i<myRecord.size();i++) {
-            sess.put("MyRecord" + i,myRecord.get(i));
-        }
-        return "success";
+    public String execute(){return "success";}
+    public List<Record> getMyRecord(){
+        return usi.findRecordOfSomeone((int)sess.get("userid"));
     }
 
 
@@ -143,10 +147,7 @@ public class BorrowerAction extends ActionSupport {
     @Action(value = "FindSomeoneRecord",
             results = @Result(name = "success", type = "dispatcher", location = "/SomeoneRecord.jsp"))
     public String SomeoneRecord(){
-        List<Record> SomeoneRecord = usi.findRecordOfSomeone(someoneId);
-        for(int i=0;i<SomeoneRecord.size();i++) {
-            sess.put("SomeRecord" + i,SomeoneRecord.get(i));
-        }
+        records = usi.findRecordOfSomeone((int)sess.get("userid"));
         return "success";
     }
 

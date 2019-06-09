@@ -121,7 +121,7 @@ public class Crawler {
     }
 
     private static BookProfile toBookProfile(String url) throws IOException {
-        BookProfile out = toBookProfile(Jsoup.connect(url).timeout(1000).get());
+        BookProfile out = toBookProfile(Jsoup.connect(url).timeout(5000).get());
         if (out == null) log.error("`null` while url == \"" + url + "\".");
         return out;
     }

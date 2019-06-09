@@ -59,6 +59,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public List<Borrower> findUserByCriteria(Map<String, Object> criteria) {
+        return borrowerRepo.findAll(ServiceUtils.convertMapToSpec(criteria));
+    }
+
+    @Override
     public Admin addAdmin(Admin admin) {
         admin.setId(null);
         return adminRepo.save(admin);
