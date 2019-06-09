@@ -47,11 +47,10 @@ public class BorrowerAction extends ActionSupport {
                     @Result(name = "fall", type = "dispatcher", location = "/BorrowerRegister.jsp")})
     public String UserRegister(){
         Borrower build = Borrower.builder().name(username).password(password).type(type).build();
-        if(asi.addUser(build) == null){
-            addActionError("用户名已存在，请重新输入。");
+        if(usi.register(build) == null){
+//            addActionError("用户名已存在，请重新输入。");
             return "fall";
         }else {
-            asi.addUser(build);
             return "success";
         }
     }
