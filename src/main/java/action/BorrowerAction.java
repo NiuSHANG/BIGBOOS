@@ -2,9 +2,7 @@ package action;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
-import entity.Borrower;
-import entity.BorrowerType;
-import entity.Record;
+import entity.*;
 import lombok.Data;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -17,6 +15,7 @@ import service.UserService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static entity.BorrowerType.STUDENT;
 
@@ -33,8 +32,9 @@ public class BorrowerAction extends ActionSupport {
     private BorrowerType type;
     private List<Record> records;
 
-    ActionContext ac = ActionContext.getContext();
-    Map<String,Object> sess = ac.getSession();
+    private int bookid;
+
+    Map<String,Object> sess = ActionContext.getContext().getSession();
 
     @Autowired
     AdminService asi;
@@ -99,27 +99,26 @@ public class BorrowerAction extends ActionSupport {
             results = {@Result(name = "success", type = "dispatcher", location = "/BorrowBookInformation.jsp"),
                     @Result(name = "fall", type = "dispatcher", location = "/BorrowBookInformation.jsp")})
     public String BorrowBook(){
-        int uid = (int)sess.get("userid");
-        if(asi.findUser(uid).getType() == STUDENT){
-            if(usi.findRecordOfSomeone(uid).size() > 8) {
-                addActionMessage("您所借阅图书已达最大数量,无法继续借阅。");
-                return "fall";
-            }else {
-                usi.borrow(asi.findUser(uid),asi.findBookCopy((int)ac.get("bookid")));
-                addActionMessage("借阅成功。");
-                //链接网页传值：bookid。
-                return "success";
-            }
-        }else{
-            if(usi.findRecordOfSomeone(uid).size() > 12) {
-                addActionMessage("您所借阅图书已达最大数量,无法继续借阅。");
-                return "fall";
-            }else {
-                usi.borrow(asi.findUser(uid),asi.findBookCopy((int)ac.get("bookid")));
-                //链接网页传值：bookid。
-                return "success";
-            }
+        Borrower user = asi.findUser((int) sess.get("userid"));
+
+        final int MAX_POSSIBLE = user.getType() == STUDENT ? 8 : 12;
+        if (user.getBorrowed().size() > MAX_POSSIBLE) {
+            addActionMessage("您所借阅图书已达最大数量,无法继续借阅。");
+            return "fall";
         }
+
+        BookProfile bookProfile = asi.findBookProfile(bookid);
+        Optional<BookCopy> candidate = bookProfile.getCopies().stream().filter(p -> p.getBorrower() == null).findAny();
+
+        if (!candidate.isPresent()) {
+            addActionMessage("该书已被借完。");
+            return "fall";
+        }
+
+        usi.borrow(user, candidate.get());
+        addActionMessage("借阅成功。");
+        //链接网页传值：bookid。
+        return "success";
     }
 
 
@@ -127,7 +126,7 @@ public class BorrowerAction extends ActionSupport {
     @Action(value = "ReturnBook",
             results = @Result(name = "success", type = "dispatcher", location = "/ReturnBookSuccess.jsp"))
     public String ReturnBook(){
-        usi.returnBack(asi.findUser((int)sess.get("userid")),asi.findBookCopy((int)ac.get("bookid")));
+        usi.returnBack(asi.findUser(userid),asi.findBookCopy(bookid));
         //链接网页传值：bookid。
         return "success";
     }
