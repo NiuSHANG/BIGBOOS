@@ -6,6 +6,8 @@ import entity.BookProfile;
 import entity.Borrower;
 import entity.Record;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -54,6 +56,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Record> findRecordOfSomeone(int uid) {
         return recordRepo.findRecordsByBorrowerId(uid);
+    }
+
+    @Override
+    public Page<BookProfile> findBookByCriteria(Map<String, Object> criteria, Pageable pageable) {
+        return bookProfileRepo.findAll(ServiceUtils.convertMapToSpec(criteria), pageable);
+    }
+
+    @Override
+    public Page<Record> findRecordOfSomeone(int uid, Pageable pageable) {
+        return recordRepo.findRecordsByBorrowerId(uid, pageable);
     }
 
     @Override

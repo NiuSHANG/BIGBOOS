@@ -1,6 +1,8 @@
 package service;
 
 import entity.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -15,6 +17,9 @@ public interface AdminService {
     List<BookProfile> findBookByCriteria(Map<String, Object> criteria);
     List<Record> findRecordByCriteria(Map<String, Object> criteria);
     List<Borrower> findUserByCriteria(Map<String, Object> criteria);
+    Page<BookProfile> findBookByCriteria(Map<String, Object> criteria, Pageable pageable);
+    Page<Record> findRecordByCriteria(Map<String, Object> criteria, Pageable pageable);
+    Page<Borrower> findUserByCriteria(Map<String, Object> criteria, Pageable pageable);
 
     Admin addAdmin(Admin admin);
     Borrower addUser(Borrower user);

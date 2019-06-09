@@ -4,6 +4,8 @@ import dao.*;
 import entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -67,6 +69,21 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<Borrower> findUserByCriteria(Map<String, Object> criteria) {
         return borrowerRepo.findAll(ServiceUtils.convertMapToSpec(criteria));
+    }
+
+    @Override
+    public Page<BookProfile> findBookByCriteria(Map<String, Object> criteria, Pageable pageable) {
+        return bookProfileRepo.findAll(ServiceUtils.convertMapToSpec(criteria), pageable);
+    }
+
+    @Override
+    public Page<Record> findRecordByCriteria(Map<String, Object> criteria, Pageable pageable) {
+        return recordRepo.findAll(ServiceUtils.convertMapToSpec(criteria), pageable);
+    }
+
+    @Override
+    public Page<Borrower> findUserByCriteria(Map<String, Object> criteria, Pageable pageable) {
+        return borrowerRepo.findAll(ServiceUtils.convertMapToSpec(criteria), pageable);
     }
 
     @Override

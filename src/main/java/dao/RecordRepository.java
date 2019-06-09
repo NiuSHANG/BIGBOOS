@@ -22,11 +22,13 @@ public interface RecordRepository extends CrudRepository<Record, Integer> {
     List<Record> findRecordsByBorrowerId(Integer borrower_id);
     List<Record> findRecordsByBorrowerName(String borrower_name);
 
+    Page<Record> findRecordsByBorrowerId(Integer borrower_id, Pageable pageable);
+
     List<Record> findRecordsByTarget(BookCopy target);
     List<Record> findRecordsByTargetId(Integer borrower_id);
 
     List<Record> findRecordsByTargetProfile(BookProfile target_profile);
-    List<Record> findRecordsByTargetProfileIsbn(Integer target_profile_isbn);
+    List<Record> findRecordsByTargetProfileIsbn(Long target_profile_isbn);
     List<Record> findRecordsByTargetProfileName(String target_profile_name);
     List<Record> findRecordsByTargetProfileAuthor(String target_profile_author);
 
