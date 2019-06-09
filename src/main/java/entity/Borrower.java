@@ -36,4 +36,9 @@ public class Borrower {
 
     @OneToMany(mappedBy = "borrower")
     private List<Record> records;
+
+    @Override
+    public String toString() {
+        return ""; // TODO temp fix
+    }
 }

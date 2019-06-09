@@ -75,7 +75,9 @@
                         <s:property value="#record.id"/>
                     </td>
                     <td width="20%" class="text-center">
-                        <s:property value="#record.id"/>
+                        <a href="<s:url action="BookInformation" />?bookid=<s:property value="#record.target.profile.id"/>">
+                            <s:property value="#record.target.profile.name"/>
+                        </a>
                     </td>
                     <td width="20%" class="text-center">
                         <s:property value="#record.since"/>
@@ -84,13 +86,14 @@
                         <s:property value="#record.deadline"/>
                     </td>
                     <td width="20%" class="text-center">
-                        <s:property value="#record.until"/>
-                    </td>
-                    <td width="5%" class="text-center">
-
-                    </td>
-                    <td width="5% " class="text-center">
-
+                        <s:if test="%{#record.until == null}">
+                            <a href="<s:url action="ReturnBook" />?copyId=<s:property value="%{#record.target.id}" />">
+                                <button class="btn btn-xs btn-success">现在归还</button>
+                            </a>
+                        </s:if>
+                        <s:else>
+                            <s:property value="#record.until"/>
+                        </s:else>
                     </td>
                 </tr>
                 </s:iterator>

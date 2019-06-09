@@ -34,4 +34,9 @@ public class Record {
 
     @Column(nullable = false)
     private LocalDate deadline;
+
+    @Override
+    public String toString() {
+        return ""; // TODO temp fix
+    }
 }

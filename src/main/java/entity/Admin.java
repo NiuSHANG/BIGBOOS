@@ -25,4 +25,9 @@ public class Admin {
 
     @Column(nullable = false)
     private String password;
+
+    @Override
+    public String toString() {
+        return ""; // TODO temp fix
+    }
 }

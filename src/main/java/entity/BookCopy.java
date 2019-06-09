@@ -24,4 +24,9 @@ public class BookCopy {
     @ManyToOne
     @JoinColumn
     private Borrower borrower;
+
+    @Override
+    public String toString() {
+        return ""; // TODO temp fix
+    }
 }

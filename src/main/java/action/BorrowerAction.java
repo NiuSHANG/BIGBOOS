@@ -33,6 +33,7 @@ public class BorrowerAction extends ActionSupport {
     private List<Record> records;
 
     private int bookid;
+    private int copyId;
 
     Map<String,Object> sess = ActionContext.getContext().getSession();
 
@@ -126,7 +127,8 @@ public class BorrowerAction extends ActionSupport {
     @Action(value = "ReturnBook",
             results = @Result(name = "success", type = "dispatcher", location = "/ReturnBookSuccess.jsp"))
     public String ReturnBook(){
-        usi.returnBack(asi.findUser(userid),asi.findBookCopy(bookid));
+        usi.returnBack(asi.findUser((int) sess.get("userid")), asi.findBookCopy(copyId));
+
         //链接网页传值：bookid。
         return "success";
     }
