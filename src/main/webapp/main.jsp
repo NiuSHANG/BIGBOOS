@@ -12,7 +12,28 @@
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    <style>body { padding-top: 51px; }</style>
+    <style>
+        body { padding-top: 51px; }
+
+        .content{
+            width:350px;
+            height: 350px;
+        }
+
+        .panel-heading{
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .panel-title {
+            cursor: pointer !important;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
 <div class="container theme-showcase" role="main">
@@ -30,7 +51,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="main.jsp"><span class="glyphicon glyphicon-home"></span> 首页</a></li>
+                    <li><a href="MainFirst.jsp"><span class="glyphicon glyphicon-home"></span> 首页</a></li>
 
 
                     <li><a href="<s:url action="MyRecord"/>"><span class="glyphicon glyphicon-book"></span> 我的图书
@@ -80,22 +101,33 @@
                 <div class="view" style="display: block;">
                     <div class="panel-group" id="fold-1">
                         <div class="panel panel-default">
-                            <s:iterator value="%{bookListNovel}" var="book" status="status">
+                            Page <s:property value="%{novelPage + 1}" />/<s:property value="%{bookListNovel.totalPages}" />.
+                            <s:if test="%{novelPage > 0}">
+                                <a href="<s:url action="Main" />?novelPage=<s:property value="%{novelPage - 1}" />">Prev</a>
+                            </s:if>
+                            <s:if test="%{novelPage < (bookListNovel.totalPages - 1)}">
+                                <a href="<s:url action="Main" />?novelPage=<s:property value="%{novelPage + 1}" />">Next</a>
+                            </s:if>
+                            <s:iterator value="%{bookListNovel.content}" var="book" status="status">
                                 <div class="panel-heading">
-                                    <a class="panel-title collapsed" aria-expanded="false" contenteditable="true" href="#fold<s:property value="%{#status.index}"/>-1" data-toggle="collapse" data-parent="#fold-1"><s:property value="#book.name"/> </a>
+                                    <a class="panel-title collapsed" aria-expanded="false"  href="#fold<s:property value="%{#status.index}"/>-1" data-toggle="collapse" data-parent="#fold-1">
+                                        <s:property value="#book.name"/>
+                                        <s:property value="%{#book.copies.size()}"/>
+                                    </a>
+
                                 </div>
                                 <div class="panel-collapse collapse" id="fold<s:property value="%{#status.index}"/>-1" aria-expanded="false" style="height: 0px;">
-                                    <div class="panel-body" contenteditable="true">
+                                    <div class="panel-body">
                                         <div class="thumbnail">
-                                            <img alt="300x200" src="v3/default4.jpg">
-                                            <div class="caption" contenteditable="true">
+                                            <img width="250" src="<s:url action="Image"/>?isbn=<s:property value="#book.isbn"/>">
+                                            <div class="caption">
                                                 <h3>作者：<s:property value="#book.author"/> </h3>
                                                 <p>
                                                     <s:property value="#book.summary"/>
                                                 </p>
                                                 <p>
-                                                    <a class="btn btn-primary" href="#">Action</a>
-                                                    <a class="btn" href="#">Action</a>
+                                                    <a href="<s:url action="BorrowBook" />?bookId=<s:property value="#book.isbn"/> " class="btn btn-primary" role="button">借阅图书</a>
+                                                    <a href="<s:url action="BookInformation"/>?bookId=<s:property value="#book.isbn"/> " class="btn btn-default" role="button">详细信息</a>
                                                 </p>
                                             </div>
                                         </div>
@@ -110,22 +142,22 @@
             <div class="view" style="display: block;">
                 <div class="panel-group" id="fold-2">
                     <div class="panel panel-default">
-                        <s:iterator value="%{bookListSocialScience}" var="book" status="status">
+                        <s:iterator value="%{bookListScience.content}" var="book" status="status">
                             <div class="panel-heading">
-                                <a class="panel-title collapsed" aria-expanded="false" contenteditable="true" href="#fold<s:property value="%{#status.index}"/>-2" data-toggle="collapse" data-parent="#fold-2"><s:property value="#book.name"/> </a>
+                                <a class="panel-title collapsed" aria-expanded="false" href="#fold<s:property value="%{#status.index}"/>-2" data-toggle="collapse" data-parent="#fold-2"><s:property value="#book.name"/> </a>
                             </div>
                             <div class="panel-collapse collapse" id="fold<s:property value="%{#status.index}"/>-2" aria-expanded="false" style="height: 0px;">
-                                <div class="panel-body" contenteditable="true">
+                                <div class="panel-body">
                                     <div class="thumbnail">
-                                        <img alt="300x200" src="v3/default4.jpg">
-                                        <div class="caption" contenteditable="true">
+                                        <img width="250" src="<s:url action="Image"/>?isbn=<s:property value="#book.isbn"/>">
+                                        <div class="caption">
                                             <h3>作者：<s:property value="#book.author"/> </h3>
                                             <p>
                                                 <s:property value="#book.summary"/>
                                             </p>
                                             <p>
-                                                <a class="btn btn-primary" href="#">Action</a>
-                                                <a class="btn" href="#">Action</a>
+                                                <a href="<s:url action="BorrowBook" />?bookId=<s:property value="book.isbn"/> " class="btn btn-primary" role="button">借阅图书</a>
+                                                <a href="<s:url action="BookInformation"/>?bookId=<s:property value="book.isbn"/> " class="btn btn-default" role="button">详细信息</a>
                                             </p>
                                         </div>
                                     </div>
@@ -136,26 +168,27 @@
                 </div>
             </div>
         </div>
+
         <div class="col-sm-4">
             <div class="view" style="display: block;">
                 <div class="panel-group" id="fold-3">
                     <div class="panel panel-default">
-                        <s:iterator value="%{bookListTeachingAssistant}" var="book" status="status">
+                        <s:iterator value="%{bookListTeachingAssistant.content}" var="book" status="status">
                             <div class="panel-heading">
-                                <a class="panel-title collapsed" aria-expanded="false" contenteditable="true" href="#fold<s:property value="%{#status.index}"/>-3" data-toggle="collapse" data-parent="#fold-3"><s:property value="#book.name"/> </a>
+                                <a class="panel-title collapsed" aria-expanded="false" href="#fold<s:property value="%{#status.index}"/>-3" data-toggle="collapse" data-parent="#fold-3"><s:property value="#book.name"/> </a>
                             </div>
                             <div class="panel-collapse collapse" id="fold<s:property value="%{#status.index}"/>-3" aria-expanded="false" style="height: 0px;">
-                                <div class="panel-body" contenteditable="true">
+                                <div class="panel-body">
                                     <div class="thumbnail">
-                                        <img alt="300x200" src="v3/default4.jpg">
-                                        <div class="caption" contenteditable="true">
+                                        <img width="250" src="<s:url action="Image"/>?isbn=<s:property value="#book.isbn"/>">
+                                        <div class="caption">
                                             <h3>作者：<s:property value="#book.author"/> </h3>
                                             <p>
                                                 <s:property value="#book.summary"/>
                                             </p>
                                             <p>
-                                                <a class="btn btn-primary" href="#">Action</a>
-                                                <a class="btn" href="#">Action</a>
+                                                <a href="<s:url action="BorrowBook" />?bookId=<s:property value="book.isbn"/> " class="btn btn-primary" role="button">借阅图书</a>
+                                                <a href="<s:url action="BookInformation"/>?bookId=<s:property value="book.isbn"/> " class="btn btn-default" role="button">详细信息</a>
                                             </p>
                                         </div>
                                     </div>
@@ -177,35 +210,45 @@
 
             </li>
             <li class="active">
-                <a href="#teachingassisdant" data-toggle="tab" aria-expanded="true">教辅</a>
+                <a href="#teachingassisdant" data-toggle="tab" aria-expanded="true">四六级</a>
             </li>
             <li class="">
-                <a href="#technologe" data-toggle="tab" aria-expanded="false">科技书</a>
+                <a href="#technologe" data-toggle="tab" aria-expanded="false">科技</a>
             </li>
             <li class="">
                 <a href="#novel" data-toggle="tab" aria-expanded="false">小说</a>
             </li>
             <li class="">
-                <a href="#socialsciences" data-toggle="tab" aria-expanded="false">社科</a>
+                <a href="#socialsciences" data-toggle="tab" aria-expanded="false">历史</a>
             </li>
             <li class="">
                 <a href="#philosophicalreligion" data-toggle="tab" aria-expanded="false">哲学宗教</a>
         </ul>
         <div class="tab-pane" id="teachingassident">
             <div class="row">
-                <s:iterator value="%{bookListTeachingAssistant}" var="book" status="status">
+                <s:iterator value="%{bookListTeachingAssistant.content}" var="book" status="status">
                     <div class="col-sm-6 col-md-4">
-                        <div class="thumbnail">
-                            <img src="..." alt="...">
+                        <div class="thumbnail" >
+                            <img width="250" src="<s:url action="Image"/>?isbn=<s:property value="#book.isbn"/>">
                             <div class="caption">
-                                <h3><s:property value="#book.name"/> </h3>
+                                <h5><s:property value="#book.name"/> </h5>
                                 <p><s:property value="#book.summary"/></p>
-                                <p><a href="<s:url action="BorrowBook" />?bookid=<s:property value="book.isbn"/> " class="btn btn-primary" role="button">借阅图书</a>
-                                    <a href="<s:url action="BookInformation"/>?bookid=<s:property value="book.isbn"/> " class="btn btn-default" role="button">详细信息</a></p>
+                                <p>
+                                    <a href="<s:url action="BorrowBook" />?bookId=<s:property value="book.isbn"/> " class="btn btn-primary" role="button">借阅图书</a>
+                                    <a href="<s:url action="BookInformation"/>?bookId=<s:property value="book.isbn"/> " class="btn btn-default" role="button">详细信息</a>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </s:iterator>
+                            Page <s:property value="%{TAPage + 1}" />/<s:property value="%{bookListTeachingAssistant.totalPages}" />.
+                        <s:if test="%{TAPage > 0}">
+                            <a href="<s:url action="Main" />?TAPage=<s:property value="%{TAPage - 1}" />">Prev</a>
+                        </s:if>
+
+                        <s:if test="%{TAPage < (bookListNovel.totalPages - 1)}">
+                            <a href="<s:url action="Main" />?TAPage=<s:property value="%{TAPage + 1}" />">Next</a>
+                        </s:if>
             </div>
         </div>
 

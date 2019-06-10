@@ -74,7 +74,7 @@
         <div id="personInfor">
             <p>一川芳杰</p>
             <p>
-                <a <s:action name="BorrowerLogOut"/>>退出登录</a>
+                <a href="<s:url action="BorrowerLogOut"/>">退出登录</a>
             </p>
         </div>
         <div class="meun-title">用户管理</div>
@@ -135,7 +135,7 @@
                                 <s:property value="#ui.password"/>
                             </td>
                             <td width="20%" class="text-center">
-                                <s:property value="#ui.type"/>
+                                <s:property value="%{#ui.type.toString() == 'FACULTY' ? '教职工' : '学生'}"/>
                             </td>
                             <td width="5%" class="text-center">
                                 <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#reviseUser-<s:property value="#ui.id"/>">修改</button>
@@ -190,17 +190,17 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="container-fluid">
-                                        <form class="form-horizontal" action="AdminAddUser" method="post">
+                                        <form class="form-horizontal" action="<s:url value="AdminAddUser" />" method="post">
                                             <div class="form-group ">
                                                 <label class="col-xs-3 control-label">学号：</label>
                                                 <div class="col-xs-8 ">
-                                                    <input type="text" class="form-control input-sm duiqi"  name="userid" placeholder="">
+                                                    <input type="text" class="form-control input-sm duiqi"  name="userId" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="form-group ">
                                                 <label class="col-xs-3 control-label">用户名：</label>
                                                 <div class="col-xs-8 ">
-                                                    <input type="text" class="form-control input-sm duiqi"  name="username" placeholder="">
+                                                    <input type="text" class="form-control input-sm duiqi"  name="userName" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -212,7 +212,7 @@
                                             <div class="form-group">
                                                 <label class="col-xs-3 control-label">身份：</label>
                                                 <div class="col-xs-8">
-                                                    <select name="type" class=" form-control select-duiqi">
+                                                    <select name="userType" class=" form-control select-duiqi">
                                                         <option selected="selected" value="FACULTY" >教职工</option>
                                                         <option value="STUDENT">学生</option>
                                                     </select>
@@ -246,26 +246,26 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="container-fluid">
-                                        <form class="form-horizontal" <s:action name="AdminUpdateUser"/>>
-                                            <input type="hidden" name="userid" value="<s:property value="#ui.id"/> " />
+                                        <form class="form-horizontal" action="<s:url action="AdminUpdateUser" />">
+                                            <input type="hidden" name="userId" value="<s:property value="#ui.id"/>" />
                                             <div class="form-group">
                                                 <label class="col-xs-3 control-label">用户名：</label>
                                                 <div class="col-xs-8 ">
-                                                    <input type="text" name="username" class="form-control input-sm duiqi" placeholder="">
+                                                    <input type="text" name="username" class="form-control input-sm duiqi" value="<s:property value="%{#ui.name}"/>">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-xs-3 control-label">密码</label>
                                                 <div class="col-xs-8 ">
-                                                    <input type="password" name="password" class="form-control input-sm duiqi" placeholder="">
+                                                    <input type="password" name="password" class="form-control input-sm duiqi" value="<s:property value="%{#ui.password}"/>">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-xs-3 control-label">身份：</label>
                                                 <div class="col-xs-8">
-                                                    <select name="type" class=" form-control select-duiqi">
-                                                        <option value="">TEACHER</option>
-                                                        <option value="">STUDENT</option>
+                                                    <select name="userType" class="form-control select-duiqi">
+                                                        <option value="FACULTY" <s:if test="%{#ui.type.toString() == 'FACULTY'}">selected</s:if>>教职工</option>
+                                                        <option value="STUDENT" <s:if test="%{#ui.type.toString() == 'STUDENT'}">selected</s:if>>学生</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -302,7 +302,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
-                                    <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveUser"/>?userid=<s:property value="#ui.id"/> ">确认删除</a>
+                                    <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveUser"/>?userid=<s:property value="#ui.id"/>">确认删除</a>
                                 </div>
                             </div>
                             <!-- /.modal-content -->
@@ -319,7 +319,7 @@
                     原始密码为12312313
                 </div>
                 <div style="padding: 50px 0;margin-top: 50px;background-color: #fff; text-align: right;width: 420px;margin: 50px auto;">
-                    <form class="form-horizontal" <s:action name="UpdateAdmin"/> >
+                    <form class="form-horizontal" action="<s:url action="UpdateAdmin" />" >
                         <div class="form-group">
                             <label class="col-xs-4 control-label">原密码：</label>
                             <div class="col-xs-5">
@@ -329,7 +329,7 @@
                         <div class="form-group">
                             <label class="col-xs-4 control-label">新密码：</label>
                             <div class="col-xs-5">
-                                <input type="password" class="form-control input-sm duiqi" name="newpassword" placeholder="" style="margin-top: 7px;">
+                                <input type="password" class="form-control input-sm duiqi" name="newPassword" placeholder="" style="margin-top: 7px;">
                             </div>
                         </div>
                         <div class="form-group">
@@ -397,27 +397,44 @@
                             <th class="text-center">
                                 价格
                             </th>
+                            <th class="text-center">
+                                库存总量
+                            </th>
+                            <th class="text-center">
+                                已借出
+                            </th>
+                            <th class="text-center">
+                                剩余
+                            </th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-center">
                         <s:iterator value="%{bookInformation}" var="book" status="status">
                             <tr class="default">
-                                <td width="10% " class="text-center">
+                                <td width="10%">
                                     <s:property value="#book.isbn"/>
                                 </td>
-                                <td width="20%" class="text-center">
+                                <td width="20%">
                                     <s:property value="#book.name"/>
                                 </td>
-                                <td width="20%" class="text-center">
+                                <td width="10%">
                                     <s:property value="#book.author"/>
                                 </td>
-                                <td width="20%" class="text-center">
+                                <td width="10%">
                                     <s:property value="#book.price"/>
                                 </td>
-                                <td width="5%" class="text-center">
-                                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#reviseBook-<s:property value="#book.isbn"/> ">修改</button>
+                                <td width="5%">
+                                    <s:property value="#book.copies.size()"/>
                                 </td>
-                                <td width="5% " class="text-center">
+                                <td width="5%">
+                                    <s:property value="%{unavailableProfilesOfIsbn[#book.isbn].size()}"/>
+                                </td>
+                                <td width="5%">
+                                    <s:property value="%{availableProfilesOfIsbn[#book.isbn].size()}"/>
+                                </td>
+                                <td width="10%">
+                                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#manageStock-<s:property value="#book.isbn"/> ">编辑库存</button>
+                                    <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#reviseBook-<s:property value="#book.isbn"/> ">修改</button>
                                     <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteBook-<s:property value="#book.isbn"/> ">删除</button>
                                 </td>
                             </tr>
@@ -467,17 +484,17 @@
                             </div>
                             <div class="modal-body">
                                 <div class="container-fluid">
-                                    <form class="form-horizontal" <s:action name="AddBook"/> >
+                                    <form class="form-horizontal" action="<s:url action="AddBook" />">
                                         <div class="form-group ">
                                             <label class="col-xs-3 control-label">ISBN：</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="id" class="form-control input-sm duiqi" placeholder="">
+                                                <input type="text" name="bookId" class="form-control input-sm duiqi" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label class="col-xs-3 control-label">图书名称：</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" class="form-control input-sm duiqi" name="bookname" placeholder="">
+                                                <input type="text" name="bookName" class="form-control input-sm duiqi" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group ">
@@ -489,7 +506,7 @@
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">类型</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="type" class="form-control input-sm duiqi"  placeholder="">
+                                                <input type="text" name="bookType" class="form-control input-sm duiqi"  placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group ">
@@ -536,48 +553,48 @@
                             </div>
                             <div class="modal-body">
                                 <div class="container-fluid">
-                                    <form class="form-horizontal" <s:action name="UpdateBook"/> method="post">
-                                        <input type="hidden" name="bookid" value="<s:property value="#book.isbn"/> ">
+                                    <form class="form-horizontal" action="<s:url action="UpdateBookProfile" />" method="post">
+                                        <input type="hidden" name="bookId" value="<s:property value="#book.isbn"/>">
+                                        <div class="form-group ">
+                                            <label class="col-xs-3 control-label">ISBN：</label>
+                                            <div class="col-xs-8 ">
+                                                <input class="form-control input-sm duiqi" value="<s:property value="#book.isbn"/>"/>
+                                            </div>
+                                        </div>
                                         <div class="form-group ">
                                             <label class="col-xs-3 control-label">图书名称：</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" class="form-control input-sm duiqi" name="bookname" placeholder="">
+                                                <input type="text" name="bookName" class="form-control input-sm duiqi" value="<s:property value="#book.name"/>">
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">作者</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="author" class="form-control input-sm duiqi"  placeholder="">
+                                                <input type="text" name="author" class="form-control input-sm duiqi" value="<s:property value="#book.author"/>">
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">出版日期</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="date" class="form-control input-sm duiqi"  placeholder="">
+                                                <input type="text" name="issueOn" class="form-control input-sm duiqi"  value="<s:property value="#book.issueOn"/>">
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">类型</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="type" class="form-control input-sm duiqi"  placeholder="">
+                                                <input type="text" name="bookType" class="form-control input-sm duiqi"  value="<s:property value="#book.type"/>">
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">简介</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="summary" class="form-control input-sm duiqi"  placeholder="">
+                                                <input type="text" name="summary" class="form-control input-sm duiqi"  value="<s:property value="#book.summary"/>">
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">价格</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="price" class="form-control input-sm duiqi"  placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label  class="col-xs-3 control-label">数量</label>
-                                            <div class="col-xs-8">
-                                                <input type="text" name="number" class="form-control input-sm duiqi"  placeholder="">
+                                                <input type="text" name="price" class="form-control input-sm duiqi"  value="<s:property value="#book.price"/>">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -610,13 +627,47 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
-                                <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveBookRrofil"/>?bookid=<s:property value="#book.isbn"/> ">确认删除</a>
+                                <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveBookProfile"/>?bookId=<s:property value="#book.isbn"/> ">确认删除</a>
                             </div>
                         </div>
                         <!-- /.modal-content -->
                     </div>
                     <!-- /.modal-dialog -->
                 </div>
+                    <!-- /.modal -->
+                </s:iterator>
+                <!--编辑库存窗口-->
+                <s:iterator value="%{bookInformation}" status="status" var="book">
+                    <div class="modal fade" id="manageStock-<s:property value="#book.isbn"/>" role="dialog" aria-labelledby="gridSystemModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+
+                                <form class="form-horizontal" action="<s:url action="ManageStock" />" method="post">
+                                    <input type="hidden" value="<s:property value="%{#book.isbn}" />" name="isbn" />
+                                    <div class="form-group ">
+                                        <label class="col-xs-3 control-label">添加图书数量：</label>
+                                        <div class="col-xs-8 ">
+                                            <input type="text" name="addCopies" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label class="col-xs-3 control-label">减少图书数量：</label>
+                                        <div class="col-xs-8 ">
+                                            <input type="text" name="subCopies" placeholder="剩余 <s:property value="availableProfilesOfIsbn[#book.isbn].size()"/> 本" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <div class="col-xs-8 ">
+                                            <input type="submit" value="修改" />
+                                            <input type="reset" value="重填" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
                     <!-- /.modal -->
                 </s:iterator>
 

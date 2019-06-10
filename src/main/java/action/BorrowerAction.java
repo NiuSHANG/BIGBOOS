@@ -26,13 +26,14 @@ import static entity.BorrowerType.STUDENT;
 public class BorrowerAction extends ActionSupport {
     private Borrower borrower;
     private Record record;
-    private String username;
+    private String userName;
     private String password;
-    private int userid;
+    private int userId;
+    private int id;
     private BorrowerType type;
     private List<Record> records;
 
-    private int bookid;
+    private int bookId;
     private int copyId;
 
     Map<String,Object> sess = ActionContext.getContext().getSession();
@@ -47,7 +48,7 @@ public class BorrowerAction extends ActionSupport {
             results = {@Result(name = "success", type = "dispatcher", location = "/BorrowerLogIn.jsp"),
                     @Result(name = "fall", type = "dispatcher", location = "/BorrowerRegister.jsp")})
     public String UserRegister(){
-        Borrower build = Borrower.builder().name(username).password(password).type(type).build();
+        Borrower build = Borrower.builder().name(userName).password(password).type(type).id(id).build();
         if(usi.register(build) == null){
 //            addActionError("用户名已存在，请重新输入。");
             return "fall";
@@ -62,12 +63,12 @@ public class BorrowerAction extends ActionSupport {
             results = {@Result(name = "success", type = "dispatcher", location = "/MainFirst.jsp" ),
                     @Result(name = "fall", type = "dispatcher", location = "/BorrowerLogIn.jsp" )})
     public String UserLogIn(){
-        if(usi.login(username,password) == null){
+        if(usi.login(userName,password) == null){
             addActionError("用户名或密码错误，请重新输入。");
             return "fall";
         }else{
-            borrower = usi.login(username,password);
-            sess.put("userid",borrower.getId());
+            borrower = usi.login(userName,password);
+            sess.put("userId",borrower.getId());
             return "success";
         }
     }
@@ -87,7 +88,7 @@ public class BorrowerAction extends ActionSupport {
     @Action(value = "BorrowerUpdate",
             results = @Result(name = "success", type = "dispatcher", location = "/UpdateSuccess.jsp"))
     public String UserUpdate(){
-        borrower = asi.findUser((int)sess.get("userid"));
+        borrower = asi.findUser((int)sess.get("userId"));
         borrower.setPassword(password);
         usi.update(borrower);
         return "success";
@@ -100,7 +101,7 @@ public class BorrowerAction extends ActionSupport {
             results = {@Result(name = "success", type = "dispatcher", location = "/BorrowBookInformation.jsp"),
                     @Result(name = "fall", type = "dispatcher", location = "/BorrowBookInformation.jsp")})
     public String BorrowBook(){
-        Borrower user = asi.findUser((int) sess.get("userid"));
+        Borrower user = asi.findUser((int) sess.get("userId"));
 
         final int MAX_POSSIBLE = user.getType() == STUDENT ? 8 : 12;
         if (user.getBorrowed().size() > MAX_POSSIBLE) {
@@ -108,7 +109,7 @@ public class BorrowerAction extends ActionSupport {
             return "fall";
         }
 
-        BookProfile bookProfile = asi.findBookProfile(bookid);
+        BookProfile bookProfile = asi.findBookProfile(bookId);
         Optional<BookCopy> candidate = bookProfile.getCopies().stream().filter(p -> p.getBorrower() == null).findAny();
 
         if (!candidate.isPresent()) {
@@ -118,7 +119,7 @@ public class BorrowerAction extends ActionSupport {
 
         usi.borrow(user, candidate.get());
         addActionMessage("借阅成功。");
-        //链接网页传值：bookid。
+        //链接网页传值：bookId。
         return "success";
     }
 
@@ -127,9 +128,9 @@ public class BorrowerAction extends ActionSupport {
     @Action(value = "ReturnBook",
             results = @Result(name = "success", type = "dispatcher", location = "/ReturnBookSuccess.jsp"))
     public String ReturnBook(){
-        usi.returnBack(asi.findUser((int) sess.get("userid")), asi.findBookCopy(copyId));
+        usi.returnBack(asi.findUser((int) sess.get("userId")), asi.findBookCopy(copyId));
 
-        //链接网页传值：bookid。
+        //链接网页传值：bookId。
         return "success";
     }
 
@@ -139,7 +140,7 @@ public class BorrowerAction extends ActionSupport {
             results = @Result(name = "success", type = "dispatcher", location = "/MyRecord.jsp"))
     public String execute(){return "success";}
     public List<Record> getMyRecord(){
-        return usi.findRecordOfSomeone((int)sess.get("userid"));
+        return usi.findRecordOfSomeone((int)sess.get("userId"));
     }
 
 
@@ -147,7 +148,7 @@ public class BorrowerAction extends ActionSupport {
     @Action(value = "FindSomeoneRecord",
             results = @Result(name = "success", type = "dispatcher", location = "/SomeoneRecord.jsp"))
     public String SomeoneRecord(){
-        records = usi.findRecordOfSomeone((int)sess.get("userid"));
+        records = usi.findRecordOfSomeone((int)sess.get("userId"));
         return "success";
     }
 

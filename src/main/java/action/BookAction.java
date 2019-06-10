@@ -10,12 +10,14 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import service.AdminService;
 import service.UserService;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 @Controller
@@ -33,6 +35,14 @@ public class BookAction extends ActionSupport {
     private int number;
     private long isbn;
 
+    private int novelPage;
+    private int PRPage;
+    private int TAPage;
+    private int sciencePage;
+    private int historyPage;
+
+
+    private static final int PER_PAGE = 9;
 
     @Autowired
     AdminService asi;
@@ -70,7 +80,7 @@ public class BookAction extends ActionSupport {
     public String AddBookNumber(){
         for(int i=0; i<number; i++) {
             asi.addBookCopy(BookCopy.builder()
-                    .profile(asi.findBookProfile((int)ActionContext.getContext().get("bookid")))
+                    .profile(asi.findBookProfile((int)ActionContext.getContext().get("bookId")))
                     .build());
         }
         return "success";
@@ -78,42 +88,51 @@ public class BookAction extends ActionSupport {
 
     @Action(value = "Main",
             results = @Result(name = "success", type = "dispatcher", location = "/main.jsp"))
-    public String execute(){return "success";}
+    public String execute() {
+        System.out.println(getBookList().getContent().get(0).getCopies());
+        return "success";
+    }
 
-    public List<BookProfile> getBookList(){
-        return asi.findBookByCriteria(new TreeMap<>());
-    }
-    public List<BookProfile> getBookListNovel(){
+    private Map<String, Object> criteriaOf(String... values) {
         TreeMap<String, Object> criteria = new TreeMap<>();
-        criteria.put("type","小说");
-        return asi.findBookByCriteria(criteria);
+        for (int i = 0; i / 2 < values.length / 2; i += 2)
+            criteria.put(values[i], values[i + 1]);
+        return criteria;
     }
-    public List<BookProfile> getBookListPhilosophicalReligion(){
-        TreeMap<String, Object> criteria = new TreeMap<>();
-        criteria.put("type","哲学/宗教");
-        return asi.findBookByCriteria(criteria);
+
+    public Page<BookProfile> getBookList(){
+        return asi.findBookByCriteria(new TreeMap<>(), new PageRequest(0, Integer.MAX_VALUE)); // TODO
     }
-    public List<BookProfile> getBookListScience(){
-        TreeMap<String, Object> criteria = new TreeMap<>();
-        criteria.put("type","科技书");
-        return asi.findBookByCriteria(criteria);
+
+    public Page<BookProfile> getBookListNovel(){
+        return asi.findBookByCriteria(criteriaOf("type", "小说"), new PageRequest(novelPage, PER_PAGE));
     }
-    public List<BookProfile> getBookListTeachingAssistant(){
-        TreeMap<String, Object> criteria = new TreeMap<>();
-        criteria.put("type","外语");
-        return asi.findBookByCriteria(criteria);
+
+    public Page<BookProfile> getBookListPhilosophicalReligion(){
+        return asi.findBookByCriteria(criteriaOf("type", "哲学/宗教"), new PageRequest(PRPage, PER_PAGE));
     }
-    public List<BookProfile> getBookListSocialScience(){
-        TreeMap<String, Object> criteria = new TreeMap<>();
-        criteria.put("type","历史");
-        return asi.findBookByCriteria(criteria);
+
+
+    public Page<BookProfile> getBookListScience(){
+        return asi.findBookByCriteria(criteriaOf("type", "科技"), new PageRequest(sciencePage, PER_PAGE));
+    }
+
+    public Page<BookProfile> getBookListTeachingAssistant(){
+        return asi.findBookByCriteria(criteriaOf("type", "外语"), new PageRequest(TAPage, PER_PAGE));
+    }
+
+    public Page<BookProfile> getBookListHistory(){
+        return asi.findBookByCriteria(criteriaOf("type", "历史"), new PageRequest(historyPage, PER_PAGE));
     }
 
     @Action(value = "BookInformation",
             results = @Result(name = "success", type = "dispatcher", location = "/BookInformation.jsp"))
     public String executeBookInformation(){return "success";}
     public BookProfile getBookInformation(){
-        return asi.findBookProfile((int)ActionContext.getContext().get("bookid"));
+        return asi.findBookProfile((int)ActionContext.getContext().get("bookId"));
     }
+
+
+
 
 }

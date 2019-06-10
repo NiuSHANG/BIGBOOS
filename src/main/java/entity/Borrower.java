@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.List;
 
 @Data
@@ -15,7 +18,7 @@ import java.util.List;
 @Entity
 public class Borrower {
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private Integer id;
 
     @Column(unique = true, nullable = false)

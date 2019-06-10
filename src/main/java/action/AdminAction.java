@@ -13,10 +13,12 @@ import org.springframework.stereotype.Controller;
 import service.AdminService;
 import service.UserService;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -29,16 +31,24 @@ public class AdminAction extends ActionSupport{
     private BookProfile profile;
     private BookCopy copy;
 
-    private BorrowerType type;
     Map<String,Object> sess = ActionContext.getContext().getSession();
     
-    private int copyid;
+    private int copyId;
+    private int userId;
+    private int adminId;
+    private Long bookId;
     private double price;
-    private String booktype;
-    private String username;
+    private String bookName;
+    private String bookType;
+    private String userName;
+    private String adminName;
     private String password;
-    private int userid;
-    private String newpassword;
+    private String author;
+    private String newPassword;
+    private String summary;
+    private String issueOn;
+    private BorrowerType userType;
+
 
     @Autowired
     AdminService asi;
@@ -46,30 +56,30 @@ public class AdminAction extends ActionSupport{
     UserService usi;
 
     
-    @Action(value = "AdminLogin",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp"),
+    @Action(value = "AdminLogIn",
+            results = {@Result(name = "success", type = "redirectAction", location = "Admin"), // TODO verify
                     @Result(name = "fall", type = "dispatcher", location = "/AdminLogIn.jsp" )})
     public String AdminLogIn(){
-        if(asi.login(username,password) == null){
+        if(asi.login(adminName,password) == null){
             addActionError("用户名或密码错误，请重新输入。");
-            return "fail";
+            return "fall";
         }else{
-        	admin = asi.login(username,password);
-            sess.put("adminid",admin.getId());
+            sess.put("adminId",asi.login(adminName,password).getId());
             return "success";
         }
     }
     
     
-    @Action(value = "AddAdmin",
-            results = {@Result(name = "success", type = "dispatcher", location = "/test.jsp" ),
-                    @Result(name = "fall", type = "dispatcher", location = "/main.jsp" )})
+    @Action(value = "AdminRegister",
+            results = {@Result(name = "success", type = "dispatcher", location = "/AdminLogIn.jsp" ),
+                    @Result(name = "fall", type = "dispatcher", location = "/AdminRegister.jsp" )})
     public String AddAdmin(){
-    	Admin build = Admin.builder().name(username).password(password).build();
+    	Admin build = Admin.builder().name(adminName).password(password).build();
         if(asi.addAdmin(build) == null){
         	 addActionError("该管理员已存在，请重新输入用户名。");
         	return "fall";
         }else{
+            sess.put("adminId",build.getId());
             return "success";
         }
     }
@@ -79,7 +89,7 @@ public class AdminAction extends ActionSupport{
             results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
                     @Result(name = "fall", type = "dispatcher", location = "/RemoveAdmin.jsp" )})
     public String RemoveAdmin(){
-    	admin = asi.findAdmin((int)sess.get("adminid"));
+    	admin = asi.findAdmin(adminId);
 
         if(asi.removeAdmin(admin) == false){
         	return "fall";
@@ -93,7 +103,7 @@ public class AdminAction extends ActionSupport{
             results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
                     @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp" )})
     public String RemoveUser(){
-        borrower = asi.findUser((int)ActionContext.getContext().get("userid"));
+        borrower = asi.findUser(userId);
         if(asi.removeUser(borrower) == false){
         	return "fall";
         }else{
@@ -106,7 +116,7 @@ public class AdminAction extends ActionSupport{
             results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
                     @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp" )})
     public String RemoveBookProfile(){
-    	profile = asi.findBookProfile((int)sess.get("bookid"));
+    	profile = asi.findBookProfile(bookId);
         if(asi.removeBookProfile(profile) == false){
             addActionMessage("删除图书失败请重新操作。");
         	return "fall";
@@ -136,9 +146,9 @@ public class AdminAction extends ActionSupport{
             results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp"),
                         @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp")})
     public String UpdateAdmin(){
-    	admin = asi.findAdmin((int)sess.get("adminid"));
+    	admin = asi.findAdmin(adminId);
     	if(admin.getPassword().equals(password)) {
-            admin.setPassword(newpassword);
+            admin.setPassword(newPassword);
             asi.updateAdmin(admin);
             addActionMessage("修改成功。");
             return "success";
@@ -150,23 +160,31 @@ public class AdminAction extends ActionSupport{
 
 
 	@Action(value = "UpdateBookProfile",
-            results = @Result(name = "success", type = "dispatcher", location = "/BookProfileList.jsp"))
+            results = {@Result(name = "success", type = "redirectAction", location = "Admin"),
+                    @Result(name = "input", type = "dispatcher", location = "/uniErr.jsp")})
     public String UpdateBookProfile(){
-    	profile = asi.findBookProfile((int)sess.get("BookProfileid"));
-    	asi.updateBookProfile(profile);
+        BookProfile bp = asi.findBookProfile(bookId);
+        bp.setName(bookName);
+        bp.setAuthor(author);
+        bp.setIssueOn(LocalDate.parse(issueOn));
+        bp.setType(bookType);
+        bp.setSummary(summary);
+        bp.setPrice(price);
+//        asi.updateBookProfile(bookProfile);
+
+        asi.updateBookProfile(bp);
         return "success";
     }
 
     @Action(value = "AdminAddUser",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp"),
-                    @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp")})
+            results = {@Result(name = "success", type = "redirectAction", location = "Admin"),
+                    @Result(name = "fall", type = "redirectAction", location = "Admin")})
     public String AdminAddUser(){
-        Borrower build = Borrower.builder().id(userid).name(username).password(password).type(type).build();
-        if(asi.addUser(build) == null){
+        Borrower build = Borrower.builder().id(userId).name(userName).password(password).type(userType).build();
+        if(asi.updateUser(build) == null){
             addActionError("用户名已存在，请重新输入。");
             return "fall";
         }else {
-            asi.updateUser(build);
             addActionMessage("添加用户成功");
             return "success";
         }
@@ -175,8 +193,9 @@ public class AdminAction extends ActionSupport{
     @Action(value = "AdminUpdateUser",
             results = @Result(name = "success", type = "dispatcher", location = "/Admin.jsp"))
     public String AdminUpdateUser(){
-        borrower = asi.findUser((int)ActionContext.getContext().get("userid"));
+        borrower = asi.findUser(userId);
         borrower.setPassword(password);
+        borrower.setType(userType);
         usi.update(borrower);
         return "success";
     }
@@ -184,7 +203,10 @@ public class AdminAction extends ActionSupport{
 
     @Action(value = "Admin",
             results = @Result(name = "success", type = "dispatcher", location = "/Admin.jsp"))
-    public String execute(){return "success";}
+    public String execute() {
+        initAvailableAndUnavailableProfilesOfIsbn();
+        return "success";
+    }
 
     public List<BookProfile> getBookInformation(){
         return asi.findBookByCriteria(new TreeMap<>());
@@ -194,5 +216,13 @@ public class AdminAction extends ActionSupport{
     }
     public List<Borrower> getUserInformation(){ return asi.findUserByCriteria(new TreeMap<>()); }
 
+    private Map<Long, List<BookCopy>> availableProfilesOfIsbn;
+    private Map<Long, List<BookCopy>> unavailableProfilesOfIsbn;
+    private void initAvailableAndUnavailableProfilesOfIsbn() {
+        availableProfilesOfIsbn = new HashMap<>();
+        unavailableProfilesOfIsbn = new HashMap<>();
+        asi.findBookByCriteria(new HashMap<>()).forEach(profile -> availableProfilesOfIsbn.put(profile.getIsbn(), profile.getCopies().stream().filter(copy -> copy.getBorrower() == null).collect(Collectors.toList())));
+        asi.findBookByCriteria(new HashMap<>()).forEach(profile -> unavailableProfilesOfIsbn.put(profile.getIsbn(), profile.getCopies().stream().filter(copy -> copy.getBorrower() != null).collect(Collectors.toList())));
+    }
 }
 
