@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
         copy.setBorrower(user);
         bookCopyRepo.save(copy);
-        return recordRepo.save(Record.builder().borrower(user).target(copy)
+        return recordRepo.save(Record.builder().borrower(user).target(copy).profile(copy.getProfile())
                 .since(Instant.now()).deadline(LocalDate.now().plus(Period.ofDays(60))).build());
     }
 
@@ -99,7 +99,10 @@ public class UserServiceImpl implements UserService {
 
         copy.setBorrower(null);
         bookCopyRepo.save(copy);
-        record.ifPresent(rec -> rec.setUntil(Instant.now()));
+        record.ifPresent(rec -> {
+            rec.setUntil(Instant.now());
+            rec.setTarget(null);
+        });
         return recordRepo.save(record.get());
     }
 }

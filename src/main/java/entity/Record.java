@@ -27,6 +27,10 @@ public class Record {
     @JoinColumn
     private BookCopy target;
 
+    @ManyToOne
+    @JoinColumn
+    private BookProfile profile;
+
     @Column(nullable = false)
     private Instant since;
 
