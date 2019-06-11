@@ -17,6 +17,7 @@ public interface BorrowerRepository extends CrudRepository<Borrower, Integer> {
     Optional<Borrower> findBorrowerByIdAndDeletedIsFalse(Integer id);
 
     Optional<Borrower> findBorrowerByName(String name);
+    Optional<Borrower> findBorrowerByNameAndDeletedIsFalse(String name);
 
     List<Borrower> findBorrowersByType(BorrowerType type);
     List<Borrower> findBorrowersByDeleted(Boolean deleted);

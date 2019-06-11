@@ -14,9 +14,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static service.ServiceUtils.mapOf;
 
 @Slf4j
 @Service
@@ -68,7 +71,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<Borrower> findUserByCriteria(Map<String, Object> criteria) {
-        return borrowerRepo.findAll(ServiceUtils.convertMapToSpec(criteria));
+        return borrowerRepo.findAll(ServiceUtils.convertMapToSpec(criteria, mapOf("deleted", false)));
     }
 
     @Override
@@ -83,7 +86,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Page<Borrower> findUserByCriteria(Map<String, Object> criteria, Pageable pageable) {
-        return borrowerRepo.findAll(ServiceUtils.convertMapToSpec(criteria), pageable);
+        return borrowerRepo.findAll(ServiceUtils.convertMapToSpec(criteria, mapOf("deleted", false)), pageable);
     }
 
     @Override
@@ -94,7 +97,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Borrower addUser(Borrower user) {
-        user.setId(null);
+        if (borrowerRepo.findBorrowerById(user.getId()).isPresent()) {
+            user.setDeleted(false);
+        } else {
+            user.setId(null);
+        }
         return borrowerRepo.save(user);
     }
 
@@ -118,7 +125,20 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean removeUser(Borrower user) {
-        borrowerRepo.delete(user);
+        user.getRecords().forEach(record -> { // 归还所有已借图书
+            if (record.getUntil() != null) return;
+
+            BookCopy copy = record.getTarget();
+            copy.setBorrower(null);
+            bookCopyRepo.save(copy);
+
+            record.setUntil(Instant.now());
+            record.setTarget(null);
+            recordRepo.save(record);
+        });
+
+        user.setDeleted(true);
+        borrowerRepo.save(user);
         return true;
     }
 

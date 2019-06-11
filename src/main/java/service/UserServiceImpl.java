@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Borrower login(String username, String password) {
-        Optional<Borrower> user = borrowerRepo.findBorrowerByName(username);
+        Optional<Borrower> user = borrowerRepo.findBorrowerByNameAndDeletedIsFalse(username);
         return user.isPresent() && user.get().getPassword().equals(password) ? user.get() : null;
     }
 
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
         Objects.requireNonNull(user);
         Objects.requireNonNull(copy);
 
-        if (copy.getBorrower() != null) return null;
+        if (user.getDeleted() || copy.getBorrower() != null) return null;
 
         copy.setBorrower(user);
         bookCopyRepo.save(copy);
@@ -84,6 +84,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Borrower register(Borrower user) {
+        if (borrowerRepo.findBorrowerById(user.getId()).isPresent())
+            user.setDeleted(false);
         return borrowerRepo.save(user);
     }
 
