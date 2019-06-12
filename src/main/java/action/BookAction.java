@@ -5,10 +5,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import entity.BookCopy;
 import entity.BookProfile;
 import lombok.Data;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +13,9 @@ import org.springframework.stereotype.Controller;
 import service.AdminService;
 import service.UserService;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Data
 public class BookAction extends ActionSupport {
     private long id;
-    private String bookname;
+    private String bookName;
     private String author;
     private String type;
     private String summary;
@@ -34,6 +34,11 @@ public class BookAction extends ActionSupport {
     private Double price;
     private int number;
     private long isbn;
+    private String issueOn;
+
+    private File img;
+    private String imgContentType;
+    private String imgFileName;
 
     private static final int PER_PAGE = 9;
 
@@ -43,28 +48,52 @@ public class BookAction extends ActionSupport {
     UserService usi;
 
     @Action(value = "AddBook",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp"),
-                    @Result(name = "fail", type = "dispatcher", location = "/Admin.jsp")})
-    public String AddBook(){
-        BookProfile build = BookProfile.builder().isbn((long)id).name(bookname).author(author).type(type).price(price).summary(summary).issueOn(LocalDate.now()).build();
-        if(asi.addBookProfile(build) == null){
+            interceptorRefs = {
+                    @InterceptorRef(value = "fileUpload", params = {
+                            "allowedTypes", "image/png,image/gif,image/jpeg"
+                    }), @InterceptorRef("basicStack")
+            }, results = {
+                    @Result(name = "success", type = "redirectAction", location = "Admin"),
+                    @Result(name = "fail", type = "redirectAction", location = "Admin")
+            })
+    public String AddBook() {
+        BookProfile build = BookProfile.builder().isbn(id).name(bookName).author(author).type(type).price(price).summary(summary).issueOn(LocalDate.now()).build();
+        try {
+            asi.putCoverImage(id, ImageIO.read(img));
+        } catch (IOException e) {
+            addActionError("图片上传失败");
+            return "fail";
+        }
+        if (asi.addBookProfile(build) == null) {
             addActionError("图书已存在，请重新输入图书信息。");
             return "fail";
-        }else {
-            asi.addBookProfile(build);
+        } else {
             addActionMessage("图书添加成功。");
-            for(int i=0; i<number; i++){
+            for (int i = 0; i < number; i++)
                 asi.addBookCopy(BookCopy.builder().profile(build).build());
-            }
             return "success";
         }
     }
     @Action(value = "UpdateBook",
-            results = @Result(name = "success", type = "dispatcher", location = "/Admin.jsp"))
+            interceptorRefs = {
+                    @InterceptorRef("fileUpload"), @InterceptorRef("basicStack")
+            }, results = @Result(name = "success", type = "redirectAction", location = "Admin"))
     public String UpdateBook(){
-        BookProfile build = BookProfile.builder().isbn((long)id).name(bookname).author(author).price(price).
-                            type(type).issueOn(LocalDate.now()).build();
-        asi.updateBookProfile(build);
+        if (img != null) {
+            try {
+                asi.putCoverImage(id, ImageIO.read(img));
+            } catch (IOException e) {
+                addActionError("图片上传失败");
+            }
+        }
+        BookProfile bp = asi.findBookProfile(bookId);
+        bp.setName(bookName);
+        bp.setAuthor(author);
+        bp.setIssueOn(LocalDate.parse(issueOn));
+        bp.setType(type);
+        bp.setSummary(summary);
+        bp.setPrice(price);
+        asi.updateBookProfile(bp);
         return "success";
     }
 

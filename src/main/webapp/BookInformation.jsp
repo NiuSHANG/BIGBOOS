@@ -36,10 +36,21 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="main.jsp"><span class="glyphicon glyphicon-home"></span> 首页</a></li>
-                    <li><a href="<s:url action="MyRecord"/>"><span class="glyphicon glyphicon-book"></span> 我的图书
-                    </a></li>
-                    <li><a href="<s:url action="BorrowerLogOut"/>"><span class="glyphicon glyphicon-user"></span> 登出</a></li>
+                    <li>
+                        <a href="main.jsp">
+                            <span class="glyphicon glyphicon-home"></span> 首页
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<s:url action="MyRecord"/>">
+                            <span class="glyphicon glyphicon-book"></span> 我的图书
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<s:url action="BorrowerLogOut"/>">
+                            <span class="glyphicon glyphicon-user"></span> 登出
+                        </a>
+                    </li>
                 </ul>
                 <form class="navbar-form navbar-right">
                     <input type="text" class="form-control" placeholder="Search..."><input type="button" class="form-control" value="搜索">

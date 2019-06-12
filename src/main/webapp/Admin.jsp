@@ -419,17 +419,23 @@
                             </div>
                             <div class="modal-body">
                                 <div class="container-fluid">
-                                    <form class="form-horizontal" action="<s:url action="AddBook" />">
+                                    <form class="form-horizontal" action="<s:url action="AddBook" />" method="post" enctype="multipart/form-data">
                                         <div class="form-group ">
                                             <label class="col-xs-3 control-label">ISBN：</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="bookId" class="form-control input-sm duiqi" placeholder="">
+                                                <input type="text" name="id" class="form-control input-sm duiqi" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label class="col-xs-3 control-label">图书名称：</label>
                                             <div class="col-xs-8 ">
                                                 <input type="text" name="bookName" class="form-control input-sm duiqi" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-xs-3 control-label">封面图片</label>
+                                            <div class="col-xs-8">
+                                                <input type="file" name="img" />
                                             </div>
                                         </div>
                                         <div class="form-group ">
@@ -441,7 +447,7 @@
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">类型</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="bookType" class="form-control input-sm duiqi"  placeholder="">
+                                                <input type="text" name="type" class="form-control input-sm duiqi"  placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group ">
@@ -488,18 +494,24 @@
                             </div>
                             <div class="modal-body">
                                 <div class="container-fluid">
-                                    <form class="form-horizontal" action="<s:url action="UpdateBookProfile" />" method="post">
+                                    <form class="form-horizontal" action="<s:url action="UpdateBook" />" method="post" enctype="multipart/form-data">
                                         <input type="hidden" name="bookId" value="<s:property value="#book.isbn"/>">
                                         <div class="form-group ">
                                             <label class="col-xs-3 control-label">ISBN：</label>
                                             <div class="col-xs-8 ">
-                                                <input class="form-control input-sm duiqi" value="<s:property value="#book.isbn"/>"/>
+                                                <s:property value="#book.isbn"/>
                                             </div>
                                         </div>
                                         <div class="form-group ">
                                             <label class="col-xs-3 control-label">图书名称：</label>
                                             <div class="col-xs-8 ">
                                                 <input type="text" name="bookName" class="form-control input-sm duiqi" value="<s:property value="#book.name"/>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-xs-3 control-label">封面图片</label>
+                                            <div class="col-xs-8">
+                                                <input type="file" name="img" />
                                             </div>
                                         </div>
                                         <div class="form-group ">
@@ -517,7 +529,7 @@
                                         <div class="form-group ">
                                             <label  class="col-xs-3 control-label">类型</label>
                                             <div class="col-xs-8 ">
-                                                <input type="text" name="bookType" class="form-control input-sm duiqi"  value="<s:property value="#book.type"/>">
+                                                <input type="text" name="type" class="form-control input-sm duiqi"  value="<s:property value="#book.type"/>">
                                             </div>
                                         </div>
                                         <div class="form-group ">
@@ -557,7 +569,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="container-fluid">
-                                    确定要删除该地区？删除后不可恢复！
+                                    确定要删除？删除后不可恢复！
                                 </div>
                             </div>
                             <div class="modal-footer">
