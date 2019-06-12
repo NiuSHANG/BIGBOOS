@@ -75,8 +75,8 @@
                         <s:property value="#record.id"/>
                     </td>
                     <td width="20%" class="text-center">
-                        <a href="<s:url action="BookInformation" />?bookid=<s:property value="#record.target.profile.id"/>">
-                            <s:property value="#record.target.profile.name"/>
+                        <a href="<s:url action="BookInformation" />?bookId=<s:property value="%{#record.profile.isbn}"/>">
+                            <s:property value="#record.profile.name"/>
                         </a>
                     </td>
                     <td width="20%" class="text-center">
