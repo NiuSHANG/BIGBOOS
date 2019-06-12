@@ -108,6 +108,7 @@ public class AdminAction extends ActionSupport{
     public String RemoveUser(){
         borrower = asi.findUser(userId);
         if(asi.removeUser(borrower) == false){
+            message = "用户不存在。";
         	return "fail";
         }else{
             message = "删除用户成功";
@@ -158,7 +159,7 @@ public class AdminAction extends ActionSupport{
                     message = "修改成功。";
                     return "success";
                 }else {
-                    message = "修改失败";
+                    message = "两次输入的密码不一致，请重新输入。";
                     return "fail";
                 }
         }else {
