@@ -49,6 +49,7 @@ public class AdminAction extends ActionSupport{
     private String summary;
     private String issueOn;
     private BorrowerType userType;
+    private String message;
 
 
     @Autowired
@@ -62,10 +63,11 @@ public class AdminAction extends ActionSupport{
                     @Result(name = "fail", type = "dispatcher", location = "/AdminLogIn.jsp" )})
     public String AdminLogIn(){
         if(asi.login(adminName,password) == null){
-            addActionError("用户名或密码错误，请重新输入。");
+            message = "用户名或密码错误，请重新输入。";
             return "fail";
         }else{
             sess.put("adminId",asi.login(adminName,password).getId());
+            message = "登录成功";
             return "success";
         }
     }
@@ -77,27 +79,27 @@ public class AdminAction extends ActionSupport{
     public String AddAdmin(){
     	Admin build = Admin.builder().name(adminName).password(password).build();
         if(asi.addAdmin(build) == null){
-        	 addActionError("该管理员已存在，请重新输入用户名。");
+            message = "该管理员已存在，请重新输入用户名。";
         	return "fail";
         }else{
-            addActionMessage("注册成功。");
+            message = "注册成功。";
             return "success";
         }
     }
     
     
-    @Action(value = "RemoveAdmin",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
-                    @Result(name = "fail", type = "dispatcher", location = "/RemoveAdmin.jsp" )})
-    public String RemoveAdmin(){
-    	admin = asi.findAdmin(adminId);
-
-        if(asi.removeAdmin(admin) == false){
-        	return "fail";
-        }else{
-            return "success";
-        }
-    }
+//    @Action(value = "RemoveAdmin",
+//            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
+//                    @Result(name = "fail", type = "dispatcher", location = "/RemoveAdmin.jsp" )})
+//    public String RemoveAdmin(){
+//    	admin = asi.findAdmin(adminId);
+//
+//        if(asi.removeAdmin(admin) == false){
+//        	return "fail";
+//        }else{
+//            return "success";
+//        }
+//    }
     
     
     @Action(value = "RemoveUser",
@@ -106,8 +108,10 @@ public class AdminAction extends ActionSupport{
     public String RemoveUser(){
         borrower = asi.findUser(userId);
         if(asi.removeUser(borrower) == false){
+            message = "用户不存在。";
         	return "fail";
         }else{
+            message = "删除用户成功";
             return "success";
         }
     }
@@ -119,10 +123,10 @@ public class AdminAction extends ActionSupport{
     public String RemoveBookProfile(){
     	profile = asi.findBookProfile(bookId);
         if(asi.removeBookProfile(profile) == false){
-            addActionMessage("删除图书失败请重新操作。");
+            message = "删除图书失败请重新操作。";
         	return "fail";
         }else{
-            addActionMessage("删除图书成功。");
+            message = "删除图书成功。";
             return "success";
         }
     }
@@ -152,13 +156,14 @@ public class AdminAction extends ActionSupport{
     	        if(newPassword.equals(rePassword)) {
                     admin.setPassword(newPassword);
                     asi.updateAdmin(admin);
-                    addActionMessage("修改成功。");
+                    message = "修改成功。";
                     return "success";
                 }else {
-    	            return "fail";
+                    message = "两次输入的密码不一致，请重新输入。";
+                    return "fail";
                 }
         }else {
-    	    addActionMessage("密码错误，请重新操作。");
+            message = "密码错误，请重新操作。";
     	    return "fail";
         }
     }
@@ -178,6 +183,7 @@ public class AdminAction extends ActionSupport{
 //        asi.updateBookProfile(bookProfile);
 
         asi.updateBookProfile(bp);
+        message = "更新图书成功";
         return "success";
     }
 
@@ -187,10 +193,10 @@ public class AdminAction extends ActionSupport{
     public String AdminAddUser(){
         Borrower build = Borrower.builder().id(userId).name(userName).password(password).type(userType).build();
         if(asi.updateUser(build) == null){
-            addActionError("用户名已存在，请重新输入。");
+            message = "用户名已存在，请重新输入。";
             return "fail";
         }else {
-            addActionMessage("添加用户成功");
+            message = "添加用户成功";
             return "success";
         }
     }
@@ -202,6 +208,7 @@ public class AdminAction extends ActionSupport{
         borrower.setPassword(password);
         borrower.setType(userType);
         usi.update(borrower);
+        message = "更新用户信息成功";
         return "success";
     }
 

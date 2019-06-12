@@ -6,6 +6,7 @@ import entity.BookProfile;
 import entity.Borrower;
 import entity.Record;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,8 +46,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean update(Borrower user) {
-        borrowerRepo.save(user);
-        return true;
+        try {
+            borrowerRepo.save(user);
+            return true;
+        } catch (DataIntegrityViolationException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override

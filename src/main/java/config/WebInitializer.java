@@ -6,6 +6,7 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+import javax.imageio.ImageIO;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 
@@ -25,5 +26,8 @@ public class WebInitializer implements WebApplicationInitializer {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(SpringConfig.class);
         servletContext.addListener(new ContextLoaderListener(context));
+
+        // ImageIO no cache
+        ImageIO.setUseCache(false);
     }
 }

@@ -40,5 +40,4 @@ public interface AdminService {
     boolean removeCoverImage(long isbn);
 
     Admin login(String username, String password);
-
 }
