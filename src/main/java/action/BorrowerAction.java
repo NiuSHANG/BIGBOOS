@@ -28,6 +28,7 @@ public class BorrowerAction extends ActionSupport {
     private Record record;
     private String userName;
     private String password;
+    private String message;
     private int userId;
     private int id;
     private BorrowerType type;
@@ -50,9 +51,10 @@ public class BorrowerAction extends ActionSupport {
     public String UserRegister(){
         Borrower build = Borrower.builder().name(userName).password(password).type(type).id(userId).build();
         if(usi.register(build) == null){
-//            addActionError("用户名已存在，请重新输入。");
+            message = "用户名已存在，请重新输入。";
             return "fail";
         }else {
+            message = "注册成功";
             return "success";
         }
     }
@@ -64,11 +66,12 @@ public class BorrowerAction extends ActionSupport {
                     @Result(name = "fail", type = "dispatcher", location = "/BorrowerLogIn.jsp" )})
     public String UserLogIn(){
         if(usi.login(userName,password) == null){
-            addActionError("用户名或密码错误，请重新输入。");
+            message = "用户名或密码错误，请重新输入。";
             return "fail";
         }else{
             borrower = usi.login(userName,password);
             sess.put("userId",borrower.getId());
+            message = "登录成功";
             return "success";
         }
     }
@@ -79,6 +82,7 @@ public class BorrowerAction extends ActionSupport {
             results = @Result(name = "success", type = "dispatcher", location = "/BorrowerLogIn.jsp" ))
     public String UserLogOut(){
         sess.clear();
+        message = "用户已退出";
         return "success";
     }
 
@@ -91,6 +95,7 @@ public class BorrowerAction extends ActionSupport {
         borrower = asi.findUser((int)sess.get("userId"));
         borrower.setPassword(password);
         usi.update(borrower);
+        message = "更新用户成功";
         return "success";
     }
 
@@ -105,7 +110,7 @@ public class BorrowerAction extends ActionSupport {
 
         final int MAX_POSSIBLE = user.getType() == STUDENT ? 8 : 12;
         if (user.getBorrowed().size() > MAX_POSSIBLE) {
-            addActionMessage("您所借阅图书已达最大数量,无法继续借阅。");
+            message = "您所借阅图书已达最大数量,无法继续借阅。";
             return "fail";
         }
 
@@ -113,12 +118,12 @@ public class BorrowerAction extends ActionSupport {
         Optional<BookCopy> candidate = bookProfile.getCopies().stream().filter(p -> p.getBorrower() == null).findAny();
 
         if (!candidate.isPresent()) {
-            addActionMessage("该书已被借完。");
+            message = "该书已被借完。";
             return "fail";
         }
 
         usi.borrow(user, candidate.get());
-        addActionMessage("借阅成功。");
+        message = "借阅成功。";
         //链接网页传值：bookId。
         return "success";
     }
@@ -131,6 +136,7 @@ public class BorrowerAction extends ActionSupport {
         usi.returnBack(asi.findUser((int) sess.get("userId")), asi.findBookCopy(copyId));
 
         //链接网页传值：bookId。
+        message = "归还图书成功";
         return "success";
     }
 

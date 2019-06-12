@@ -40,6 +40,8 @@ public class BookAction extends ActionSupport {
     private String imgContentType;
     private String imgFileName;
 
+    private String message;
+
     private static final int PER_PAGE = 9;
 
     @Autowired
@@ -61,14 +63,14 @@ public class BookAction extends ActionSupport {
         try {
             asi.putCoverImage(id, ImageIO.read(img));
         } catch (IOException e) {
-            addActionError("图片上传失败");
+            message = "图片上传失败。";
             return "fail";
         }
         if (asi.addBookProfile(build) == null) {
-            addActionError("图书已存在，请重新输入图书信息。");
+            message = "图书已存在，请重新输入图书信息。";
             return "fail";
         } else {
-            addActionMessage("图书添加成功。");
+            message = "图书添加成功。";
             for (int i = 0; i < number; i++)
                 asi.addBookCopy(BookCopy.builder().profile(build).build());
             return "success";
@@ -83,7 +85,7 @@ public class BookAction extends ActionSupport {
             try {
                 asi.putCoverImage(id, ImageIO.read(img));
             } catch (IOException e) {
-                addActionError("图片上传失败");
+                message = "图片上传失败";
             }
         }
         BookProfile bp = asi.findBookProfile(bookId);
@@ -94,25 +96,25 @@ public class BookAction extends ActionSupport {
         bp.setSummary(summary);
         bp.setPrice(price);
         asi.updateBookProfile(bp);
+        message = "图片上传成功";
         return "success";
     }
 
-    @Action(value = "BookNumber",
-            results = @Result(name = "success", type = "dispatcher", location = "/main.jsp"))
-    public String AddBookNumber(){
-        for(int i=0; i<number; i++) {
-            asi.addBookCopy(BookCopy.builder()
-                    .profile(asi.findBookProfile((int)ActionContext.getContext().get("bookId")))
-                    .build());
-        }
-        return "success";
-    }
+//    @Action(value = "BookNumber",
+//            results = @Result(name = "success", type = "dispatcher", location = "/main.jsp"))
+//    public String AddBookNumber(){
+//        for(int i=0; i<number; i++) {
+//            asi.addBookCopy(BookCopy.builder()
+//                    .profile(asi.findBookProfile((int)ActionContext.getContext().get("bookId")))
+//                    .build());
+//        }
+//        return "success";
+//    }
 
     private String currentType;
     @Action(value = "Main",
             results = @Result(name = "success", type = "dispatcher", location = "/main.jsp"))
     public String execute() {
-        System.out.println(getBookList().getContent().get(0).getCopies());
         return "success";
     }
 

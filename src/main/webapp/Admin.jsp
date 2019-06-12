@@ -18,6 +18,10 @@
     <title>图书管理系统</title>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/popup.js"></script>
+    <script>
+        <s:if test="message != null">addEventListener('load', () => initPopup('<s:property value="message"/>'));</s:if>
+    </script>
     <script>
         $(function() {
             $(".meun-item").click(function() {
@@ -73,7 +77,7 @@
             <p>图书管理系统管理员页</p>
         </div>
         <div id="personInfor">
-            <p>一川芳杰</p>
+            <a href="AdminRegister.jsp">一川芳杰</a>
             <p>
                 <a href="<s:url action="BorrowerLogOut"/>">退出登录</a>
             </p>
