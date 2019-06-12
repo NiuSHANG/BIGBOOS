@@ -1,7 +1,9 @@
 package service;
 
 import config.SpringConfig;
-import entity.*;
+import entity.Admin;
+import entity.BookCopy;
+import entity.BookProfile;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,7 +31,7 @@ public class AdminServiceTest {
             .type("type").issueOn(LocalDate.of(2000, 1, 1)).price(1.0).build();
 
     private static List<Admin> admins = new LinkedList<>();
-    private static List<Borrower> users = new LinkedList<>();
+//    private static List<Borrower> users = new LinkedList<>();
     private static List<BookProfile> profiles = new LinkedList<>();
     private static Map<Long, List<BookCopy>> bookCopies = new TreeMap<>(); // key is bookProfile.id
 
@@ -42,12 +44,12 @@ public class AdminServiceTest {
             admins.add(Admin.builder().name("admins_" + random.nextInt()).password(Integer.toString(i)).build());
         // endregion
 
-        // region users
-        int userSize = random.nextInt(20);
-        for (int i = 0; i < userSize; i++)
-            users.add(Borrower.builder().name("users_" + random.nextInt()).password(Integer.toString(i))
-                    .type(random.nextBoolean() ? BorrowerType.FACULTY : BorrowerType.STUDENT).build());
-        // endregion
+//        // region users
+//        int userSize = random.nextInt(20);
+//        for (int i = 0; i < userSize; i++)
+//            users.add(Borrower.builder().name("users_" + random.nextInt()).password(Integer.toString(i))
+//                    .type(random.nextBoolean() ? BorrowerType.FACULTY : BorrowerType.STUDENT).build());
+//        // endregion
 
         // region profiles & bookCopies
         int profileSize = random.nextInt(20);
@@ -81,7 +83,7 @@ public class AdminServiceTest {
         profile = adminService.addBookProfile(profile);
 
         ServiceTestingUtils.addAllAndUpdate(admins, adminService::addAdmin);
-        ServiceTestingUtils.addAllAndUpdate(users, adminService::addUser);
+//        ServiceTestingUtils.addAllAndUpdate(users, adminService::addUser);
         ServiceTestingUtils.addAllAndUpdate(profiles, adminService::addBookProfile, p -> bookCopies.get(p.getIsbn()).forEach(copy -> copy.setProfile(p)));
         bookCopies.forEach((isbn, copyList) -> ServiceTestingUtils.addAllAndUpdate(copyList, adminService::addBookCopy));
     }
@@ -92,15 +94,15 @@ public class AdminServiceTest {
         adminService.removeBookProfile(profile);
 
         admins.forEach(adminService::removeAdmin);
-        users.forEach(adminService::removeUser);
+//        users.forEach(adminService::removeUser);
         profiles.forEach(adminService::removeBookProfile);
         bookCopies.forEach((isbn, copyList) -> copyList.forEach(adminService::removeBookCopy));
     }
 
-    @Test
-    public void findUser() {
-        users.forEach(u -> Assert.assertEquals(u, adminService.findUser(u.getId())));
-    }
+//    @Test
+//    public void findUser() {
+//        users.forEach(u -> Assert.assertEquals(u, adminService.findUser(u.getId())));
+//    }
 
     @Test
     public void findBookProfile() {
