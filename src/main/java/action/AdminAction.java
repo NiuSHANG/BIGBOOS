@@ -43,8 +43,9 @@ public class AdminAction extends ActionSupport{
     private String userName;
     private String adminName;
     private String password;
-    private String author;
     private String newPassword;
+    private String rePassword;
+    private String author;
     private String summary;
     private String issueOn;
     private BorrowerType userType;
@@ -58,11 +59,11 @@ public class AdminAction extends ActionSupport{
     
     @Action(value = "AdminLogIn",
             results = {@Result(name = "success", type = "redirectAction", location = "Admin"), // TODO verify
-                    @Result(name = "fall", type = "dispatcher", location = "/AdminLogIn.jsp" )})
+                    @Result(name = "fail", type = "dispatcher", location = "/AdminLogIn.jsp" )})
     public String AdminLogIn(){
         if(asi.login(adminName,password) == null){
             addActionError("用户名或密码错误，请重新输入。");
-            return "fall";
+            return "fail";
         }else{
             sess.put("adminId",asi.login(adminName,password).getId());
             return "success";
@@ -72,14 +73,14 @@ public class AdminAction extends ActionSupport{
     
     @Action(value = "AdminRegister",
             results = {@Result(name = "success", type = "dispatcher", location = "/AdminLogIn.jsp" ),
-                    @Result(name = "fall", type = "dispatcher", location = "/AdminRegister.jsp" )})
+                    @Result(name = "fail", type = "dispatcher", location = "/AdminRegister.jsp" )})
     public String AddAdmin(){
     	Admin build = Admin.builder().name(adminName).password(password).build();
         if(asi.addAdmin(build) == null){
         	 addActionError("该管理员已存在，请重新输入用户名。");
-        	return "fall";
+        	return "fail";
         }else{
-            sess.put("adminId",build.getId());
+            addActionMessage("注册成功。");
             return "success";
         }
     }
@@ -87,12 +88,12 @@ public class AdminAction extends ActionSupport{
     
     @Action(value = "RemoveAdmin",
             results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
-                    @Result(name = "fall", type = "dispatcher", location = "/RemoveAdmin.jsp" )})
+                    @Result(name = "fail", type = "dispatcher", location = "/RemoveAdmin.jsp" )})
     public String RemoveAdmin(){
     	admin = asi.findAdmin(adminId);
 
         if(asi.removeAdmin(admin) == false){
-        	return "fall";
+        	return "fail";
         }else{
             return "success";
         }
@@ -100,12 +101,12 @@ public class AdminAction extends ActionSupport{
     
     
     @Action(value = "RemoveUser",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
-                    @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp" )})
+            results = {@Result(name = "success", type = "redirectAction", location = "Admin" ),
+                    @Result(name = "fail", type = "redirectAction", location = "Admin" )})
     public String RemoveUser(){
         borrower = asi.findUser(userId);
         if(asi.removeUser(borrower) == false){
-        	return "fall";
+        	return "fail";
         }else{
             return "success";
         }
@@ -113,48 +114,52 @@ public class AdminAction extends ActionSupport{
     
     
     @Action(value = "RemoveBookProfile",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
-                    @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp" )})
+            results = {@Result(name = "success", type = "redirectAction", location = "Admin" ),
+                    @Result(name = "fail", type = "redirectAction", location = "Admin" )})
     public String RemoveBookProfile(){
     	profile = asi.findBookProfile(bookId);
         if(asi.removeBookProfile(profile) == false){
             addActionMessage("删除图书失败请重新操作。");
-        	return "fall";
+        	return "fail";
         }else{
             addActionMessage("删除图书成功。");
             return "success";
         }
     }
     
-    
-    @Action(value = "RemoveBookCopy",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
-                    @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp" )})
-    public String RemoveBookCopy(){
-    	copy = asi.findBookCopy(1);
-        if(asi.removeBookCopy(copy) == false){
-            addActionMessage("删除图书失败请重新操作。");
-        	return "fall";
-        }else{
-            addActionMessage("删除图书成功。");
-            return "success";
-        }
-    }
+//
+//    @Action(value = "RemoveBookCopy",
+//            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp" ),
+//                    @Result(name = "fail", type = "dispatcher", location = "/Admin.jsp" )})
+//    public String RemoveBookCopy(){
+//    	copy = asi.findBookCopy(1);
+//        if(asi.removeBookCopy(copy) == false){
+//            addActionMessage("删除图书失败请重新操作。");
+//        	return "fail";
+//        }else{
+//            addActionMessage("删除图书成功。");
+//            return "success";
+//        }
+//    }
     
     
     @Action(value = "UpdateAdmin",
-            results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp"),
-                        @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp")})
+            results = {@Result(name = "success", type = "redirectAction", location = "Admin"),
+                        @Result(name = "fail", type = "redirectAction", location = "Admin")})
     public String UpdateAdmin(){
-    	admin = asi.findAdmin(adminId);
+    	admin = asi.findAdmin((Integer) sess.get("adminId"));
     	if(admin.getPassword().equals(password)) {
-            admin.setPassword(newPassword);
-            asi.updateAdmin(admin);
-            addActionMessage("修改成功。");
-            return "success";
+    	        if(newPassword.equals(rePassword)) {
+                    admin.setPassword(newPassword);
+                    asi.updateAdmin(admin);
+                    addActionMessage("修改成功。");
+                    return "success";
+                }else {
+    	            return "fail";
+                }
         }else {
     	    addActionMessage("密码错误，请重新操作。");
-    	    return "fall";
+    	    return "fail";
         }
     }
 
@@ -178,12 +183,12 @@ public class AdminAction extends ActionSupport{
 
     @Action(value = "AdminAddUser",
             results = {@Result(name = "success", type = "redirectAction", location = "Admin"),
-                    @Result(name = "fall", type = "redirectAction", location = "Admin")})
+                    @Result(name = "fail", type = "redirectAction", location = "Admin")})
     public String AdminAddUser(){
         Borrower build = Borrower.builder().id(userId).name(userName).password(password).type(userType).build();
         if(asi.updateUser(build) == null){
             addActionError("用户名已存在，请重新输入。");
-            return "fall";
+            return "fail";
         }else {
             addActionMessage("添加用户成功");
             return "success";

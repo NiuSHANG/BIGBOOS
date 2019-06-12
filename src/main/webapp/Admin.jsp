@@ -7,7 +7,8 @@
 --%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html lang="ch"><head>
+<html lang="ch">
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
@@ -67,7 +68,7 @@
 <body>
 <div id="wrap">
     <!-- 左侧菜单栏目块 -->
-    <div class="leftMeun" id="leftMeun">
+        <div class="leftMeun" id="leftMeun">
         <div id="logoDiv">
             <p>图书管理系统管理员页</p>
         </div>
@@ -86,9 +87,18 @@
     </div>
     <!-- 右侧具体内容栏目 -->
     <div id="rightContent">
-        <a class="toggle-btn" id="nimei">
-            <i class="glyphicon glyphicon-align-justify"></i>
-        </a>
+        <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                </div>
+                <div class="col-md-6 column">
+                    <s:actionmessage />
+                    <s:actionerror/>
+                </div>
+                <div class="col-md-4 column">
+                </div>
+            </div>
+        </div>
         <!-- Tab panes -->
         <div class="tab-content">
             <!--用户管理模块-->
@@ -149,44 +159,13 @@
                         </table>
                     </div>
 
-                <!--页码块-->
-                <footer class="footer">
-                    <ul class="pagination">
-                        <li>
-                            <select>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                                <option>6</option>
-                                <option>7</option>
-                                <option>8</option>
-                                <option>9</option>
-                                <option>10</option>
-                            </select>
-                            页
-                        </li>
-                        <li class="gray">
-                            共20页
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-menu-left">
-                            </i>
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-menu-right">
-                            </i>
-                        </li>
-                    </ul>
-                </footer>
                 <!--弹出添加用户窗口-->
                     <div class="modal fade" id="addUser" role="dialog" aria-labelledby="gridSystemModalLabel">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                    <h4 class="modal-title" id="gridSystemModalLabel">添加用户</h4>
+                                    <h4 class="modal-title" >添加用户</h4>
                                 </div>
                                 <div class="modal-body">
                                     <div class="container-fluid">
@@ -242,7 +221,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                    <h4 class="modal-title" id="gridSystemModalLabel">修改用户</h4>
+                                    <h4 class="modal-title">修改用户</h4>
                                 </div>
                                 <div class="modal-body">
                                     <div class="container-fluid">
@@ -302,7 +281,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
-                                    <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveUser"/>?userid=<s:property value="#ui.id"/>">确认删除</a>
+                                    <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveUser"/>?userId=<s:property value="#ui.id"/>">确认删除</a>
                                 </div>
                             </div>
                             <!-- /.modal-content -->
@@ -335,7 +314,7 @@
                         <div class="form-group">
                             <label class="col-xs-4 control-label">重复密码：</label>
                             <div class="col-xs-5">
-                                <input type="password" class="form-control input-sm duiqi" placeholder="" style="margin-top: 7px;">
+                                <input type="password" name="rePassword" class="form-control input-sm duiqi" placeholder="" style="margin-top: 7px;">
                             </div>
                         </div>
                         <div class="form-group text-right">
@@ -349,22 +328,8 @@
 
             </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             <!--图书管理模块-->
             <div role="tabpanel" class="tab-pane" id="scho">
-
                 <div class="check-div form-inline">
                     <div class="col-xs-3">
                         <button class="btn btn-yellow btn-xs" data-toggle="modal" data-target="#addBook">添加图书 </button>
@@ -442,37 +407,7 @@
                         </tbody>
                     </table>
                 </div>
-                <!--页码块-->
-                <footer class="footer">
-                    <ul class="pagination">
-                        <li>
-                            <select>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                                <option>6</option>
-                                <option>7</option>
-                                <option>8</option>
-                                <option>9</option>
-                                <option>10</option>
-                            </select>
-                            页
-                        </li>
-                        <li class="gray">.
-                            共20页
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-menu-left">
-                            </i>
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-menu-right">
-                            </i>
-                        </li>
-                    </ul>
-                </footer>
+
 
                 <!--弹出添加图书窗口-->
                 <div class="modal fade" id="addBook" role="dialog" aria-labelledby="gridSystemModalLabel">
@@ -627,7 +562,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
-                                <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveBookProfile"/>?bookId=<s:property value="#book.isbn"/> ">确认删除</a>
+                                <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveBookProfile"/>?bookId=<s:property value="#book.isbn"/>#scho">确认删除</a>
                             </div>
                         </div>
                         <!-- /.modal-content -->
@@ -682,10 +617,10 @@
                                 记录编号
                             </th>
                             <th class="text-center">
-                                读者号
+                                读者名
                             </th>
                             <th class="text-center">
-                                图书号
+                                图书名
                             </th>
                             <th class="text-center">
                                 借书时间
@@ -705,10 +640,10 @@
                                     <s:property value="#record.id"/>
                                 </td>
                                 <td width="15%" class="text-center">
-                                    <s:property value="#record.borrower_id"/>
+                                    <s:property value="#record.borrower.name"/>
                                 </td>
                                 <td width="15%" class="text-center">
-                                    <s:property value="#record.target_id"/>
+                                    <s:property value="#record.target.profile.name"/>
                                 </td>
                                 <td width="15%" class="text-center">
                                     <s:property value="#record.since"/>
@@ -727,72 +662,39 @@
                         </tbody>
                     </table>
                     </div>
-
                 </div>
-                <!--页码块-->
-                <footer class="footer">
-                    <ul class="pagination">
-                        <li>
-                            <select>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                                <option>6</option>
-                                <option>7</option>
-                                <option>8</option>
-                                <option>9</option>
-                                <option>10</option>
-                            </select>
-                            页
-                        </li>
-                        <li class="gray">
-                            共20页
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-menu-left">
-                            </i>
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-menu-right">
-                            </i>
-                        </li>
-                    </ul>
-                </footer>
-
-
 
                 <!--弹出删除记录警告窗口-->
-            <s:iterator value="recordInformation" var="record" status="status">
-                <div class="modal fade" id="deleteRecord-<s:property value="#record.id"/> " role="dialog" aria-labelledby="gridSystemModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                <h4 class="modal-title" id="gridSystemModalLabeldeleterecord">提示</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="container-fluid">
-                                    确定要删除该记录？删除后不可恢复！
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveRecord"/>?recordid=<s:property value="#record.id"/> ">确认删除</a>
-                                <%--removerecord没有实现--%>
-                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
-                            </div>
-                        </div>
-                        <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-                <!-- /.modal -->
-            </s:iterator>
-            </div>
+<%--            <s:iterator value="recordInformation" var="record" status="status">--%>
+<%--                <div class="modal fade" id="deleteRecord-<s:property value="#record.id"/> " role="dialog" aria-labelledby="gridSystemModalLabel">--%>
+<%--                    <div class="modal-dialog" role="document">--%>
+<%--                        <div class="modal-content">--%>
+<%--                            <div class="modal-header">--%>
+<%--                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>--%>
+<%--                                <h4 class="modal-title" id="gridSystemModalLabeldeleterecord">提示</h4>--%>
+<%--                            </div>--%>
+<%--                            <div class="modal-body">--%>
+<%--                                <div class="container-fluid">--%>
+<%--                                    确定要删除该记录？删除后不可恢复！--%>
+<%--                                </div>--%>
+<%--                            </div>--%>
+<%--                            <div class="modal-footer">--%>
+<%--                                <a type="button" class="btn  btn-xs btn-danger" href="<s:url value="RemoveRecord"/>?recordid=<s:property value="#record.id"/>#">确认删除</a>--%>
+<%--                                &lt;%&ndash;removerecord没有实现&ndash;%&gt;--%>
+<%--                                <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>--%>
+<%--                            </div>--%>
+<%--                        </div>--%>
+<%--                        <!-- /.modal-content -->--%>
+<%--                    </div>--%>
+<%--                    <!-- /.modal-dialog -->--%>
+<%--                </div>--%>
+<%--                <!-- /.modal -->--%>
+<%--            </s:iterator>--%>
             </div>
         </div>
     </div>
+
+
 
 
 

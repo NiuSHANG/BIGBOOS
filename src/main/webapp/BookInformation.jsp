@@ -1,4 +1,5 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--
   Created by IntelliJ IDEA.
   User: ZZU
@@ -6,7 +7,7 @@
   Time: 20:15
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
     <title>图书信息</title>
@@ -47,17 +48,49 @@
         </div>
     </nav>
     <div class="row">
-        <table class="table table-hover">
-            <tbody>
-                <s:iterator value="bookInformation" var="book" status="status">
-                    <tr><img src="" /> </tr>
-                    <tr><s:property value="#book.name"/> </tr>
-                    <tr><s:property value="#book.author"/> </tr>
-                    <tr><s:property value="#book.summary"/> </tr>
-                    <tr><a href="<s:url action="BorrowBook"/>?bookid=<s:property value="#book.isbn"/>">借阅</a></tr>
-                </s:iterator>
-            </tbody>
-        </table>
+        <div class="goods-summary clearfix">
+            <!-- 商品信息 -->
+            <div class="goods-info pull-right">
+                <h3 class="goods-title">书号：<s:property value="%{bookInfo.isbn}"/></h3>
+                <div class="goods-price clearfix">
+                    <strong class="goods-current-price pull-left" ><s:property value="%{bookInfo.name}"/></strong>
+                </div>
+                <h3 class="goods-title">作者：<s:property value="%{bookInfo.author}"/></h3>
+                <h3 class="goods-title">出版日期：<s:property value="%{bookInfo.issueOn}"/></h3>
+                <h3 class="goods-title">简介：<s:property value="%{bookInfo.summary}"/></h3>
+                <table class="goods-meta">
+                    <tbody>
+                    <tr class="first-child">
+                        <td class="goods-meta-name">库存：</td>
+                        <td><s:property value="%{bookInfo.copies.size()}"/></td>
+                        <td class="goods-meta-name">已借出：</td>
+                        <td><s:property value="%{bookInfo.copies.size() - available}"/></td>
+                        <td class="goods-meta-name">未借出：</td>
+                        <td><s:property value="%{available}"/></td>
+                    </tr>
+                    <tr class="last-child">
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="showcase-examples l-over l-center">
+                    <a href="<s:url action="BorrowBook"/>?bookId=<s:property value="%{bookInfo.isbn}"/>">借阅</a>
+                    <a href="<s:url action="ReturnBook"/>?bookId=<s:property value="%{bookInfo.isbn}"/>">归还</a>
+                </div>
+            </div>
+            <!-- 商品图片 -->
+            <div class="goods-image pull-left">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="swiper-image">
+                                <img width="250" src="<s:url action="Image"/>?isbn=<s:property value="%{bookInfo.isbn}"/>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 </body>

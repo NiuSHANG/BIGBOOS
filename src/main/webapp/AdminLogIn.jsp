@@ -1,24 +1,38 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: ZZU
-  Date: 2019/6/8
-  Time: 20:10
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
-    <title>Title</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/auth.css">
+    <title>管理员登录</title>
 </head>
+
 <body>
-<form action="<s:url action="AdminLogIn"/>" method="post">
-    <tr>用户名：<input type="text" name="adminName" value="234"> </tr>
-    <tr>密码:<input type="password" name="password" value="234"></tr>
-    <tr>
-        <input type="submit" value="登录"/>
-        <input type="reset" value="清空"/>
-    </tr>
-</form>
+<div class="lowin lowin-blue">
+    <div class="lowin-brand">
+        <img src="images/2.jpg" alt="logo">
+    </div>
+    <div class="lowin-wrapper">
+        <div class="lowin-box lowin-login">
+            <div class="lowin-box-inner" >
+                <form action="<s:url value="AdminLogIn"/>" method="post">
+                    <p> 登录窗口</p>
+                    <div class="lowin-group" >
+                        <label>管理员用户名： </label>
+                        <input type="text" name="adminName" class="lowin-input">
+                    </div>
+                    <div class="lowin-group password-group">
+                        <label>密码：</label>
+                        <input type="password" name="password" autocomplete="current-password" class="lowin-input">
+                    </div>
+                    <button class="lowin-btn login-btn" type="submit">登录</button>
+                    <button class="lowin-btn login-btn" type="reset">重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

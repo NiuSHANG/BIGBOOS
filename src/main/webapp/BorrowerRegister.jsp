@@ -7,54 +7,53 @@
 --%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
+
 <html>
 <head>
-    <title>Home</title>
-    <!-- Custom Theme files -->
-    <link href="css/style.css" rel="stylesheet" type="text/css" media="all"/>
-    <!-- Custom Theme files -->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="keywords" content="Login form web template, Sign up Web Templates, Flat Web Templates, Login signup Responsive web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
-
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/auth.css">
+    <title>用户注册</title>
 </head>
+
 <body>
-<div class="login">
-    <h2>用户登录</h2>
-    <div class="login-top">
-        <form action="<s:url action="BorrowerRegister"/>" method="post">
-            <table>
-                <tr>
-                    <td>学号</td> &nbsp; &nbsp; &nbsp;
-                    <td>	<input type="text" name="id" placeholder="请输入学号" value="2019" required = "required"></td>
-                </tr>
-                <tr>
-                    <td>用户名</td> &nbsp; &nbsp; &nbsp;
-                    <td>	<input type="text" name="userName" value="请输入用户名" required = "required"></td>
-                </tr>
-                <tr>
-                    <td>密码</td>
-                    <td>	<input type="password" name="password" value="请输入密码" required = "required"></td>
-                </tr>
-                <tr>
-                    <td>用户类型</td> &nbsp; &nbsp; &nbsp;
-                    <td>
+<div class="lowin lowin-blue">
+    <div class="lowin-brand">
+        <img src="images/2.jpg" alt="logo">
+    </div>
+    <div class="lowin-wrapper">
+        <div class="lowin-box lowin-login">
+            <div class="lowin-box-inner" >
+                <form action="<s:url value="BorrowerRegister" />" method="post">
+                    <p> 登录窗口</p>
+                    <div class="lowin-group" >
+                        <label>学号：</label>
+                        <input type="text" name="userId" class="lowin-input">
+                    </div>
+                    <div class="lowin-group" >
+                        <label>用户名：</label>
+                        <input type="text" name="userName" class="lowin-input">
+                    </div>
+                    <div class="lowin-group password-group">
+                        <label>密码：</label>
+                        <input type="password" name="password" autocomplete="current-password" class="lowin-input">
+                    </div>
+                    <div class="lowin-group password-group">
+                        <label>用户类型：</label>
                         <select name="type">
                             <option value="STUDENT">学生</option>
                             <option value="FACULTY">教师</option>
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <input type="submit" value="注册" >
-                    <input type="reset" value="清空"/>
-                </tr>
-            </table>
-        </form>
+                    </div>
+                    <div class="lowin-group password-group">
+                        <button class="lowin-btn login-btn" type="submit">登录</button>
+                        <button class="lowin-btn login-btn" type="reset">重置</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-
 </body>
 </html>
+
+

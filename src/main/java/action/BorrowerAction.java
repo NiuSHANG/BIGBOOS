@@ -46,12 +46,12 @@ public class BorrowerAction extends ActionSupport {
     //用户注册
     @Action(value = "BorrowerRegister",
             results = {@Result(name = "success", type = "dispatcher", location = "/BorrowerLogIn.jsp"),
-                    @Result(name = "fall", type = "dispatcher", location = "/BorrowerRegister.jsp")})
+                    @Result(name = "fail", type = "dispatcher", location = "/BorrowerRegister.jsp")})
     public String UserRegister(){
-        Borrower build = Borrower.builder().name(userName).password(password).type(type).id(id).build();
+        Borrower build = Borrower.builder().name(userName).password(password).type(type).id(userId).build();
         if(usi.register(build) == null){
 //            addActionError("用户名已存在，请重新输入。");
-            return "fall";
+            return "fail";
         }else {
             return "success";
         }
@@ -61,11 +61,11 @@ public class BorrowerAction extends ActionSupport {
     //用户登入
     @Action(value = "BorrowerLogIn",
             results = {@Result(name = "success", type = "dispatcher", location = "/MainFirst.jsp" ),
-                    @Result(name = "fall", type = "dispatcher", location = "/BorrowerLogIn.jsp" )})
+                    @Result(name = "fail", type = "dispatcher", location = "/BorrowerLogIn.jsp" )})
     public String UserLogIn(){
         if(usi.login(userName,password) == null){
             addActionError("用户名或密码错误，请重新输入。");
-            return "fall";
+            return "fail";
         }else{
             borrower = usi.login(userName,password);
             sess.put("userId",borrower.getId());
@@ -99,14 +99,14 @@ public class BorrowerAction extends ActionSupport {
     //用户借书(not test)
     @Action(value = "BorrowBook",
             results = {@Result(name = "success", type = "dispatcher", location = "/BorrowBookInformation.jsp"),
-                    @Result(name = "fall", type = "dispatcher", location = "/BorrowBookInformation.jsp")})
+                    @Result(name = "fail", type = "dispatcher", location = "/BorrowBookInformation.jsp")})
     public String BorrowBook(){
         Borrower user = asi.findUser((int) sess.get("userId"));
 
         final int MAX_POSSIBLE = user.getType() == STUDENT ? 8 : 12;
         if (user.getBorrowed().size() > MAX_POSSIBLE) {
             addActionMessage("您所借阅图书已达最大数量,无法继续借阅。");
-            return "fall";
+            return "fail";
         }
 
         BookProfile bookProfile = asi.findBookProfile(bookId);
@@ -114,7 +114,7 @@ public class BorrowerAction extends ActionSupport {
 
         if (!candidate.isPresent()) {
             addActionMessage("该书已被借完。");
-            return "fall";
+            return "fail";
         }
 
         usi.borrow(user, candidate.get());

@@ -17,8 +17,8 @@ import service.AdminService;
 import service.UserService;
 
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @ParentPackage("struts-default")
@@ -35,13 +35,6 @@ public class BookAction extends ActionSupport {
     private int number;
     private long isbn;
 
-    private int novelPage;
-    private int PRPage;
-    private int TAPage;
-    private int sciencePage;
-    private int historyPage;
-
-
     private static final int PER_PAGE = 9;
 
     @Autowired
@@ -51,12 +44,12 @@ public class BookAction extends ActionSupport {
 
     @Action(value = "AddBook",
             results = {@Result(name = "success", type = "dispatcher", location = "/Admin.jsp"),
-                    @Result(name = "fall", type = "dispatcher", location = "/Admin.jsp")})
+                    @Result(name = "fail", type = "dispatcher", location = "/Admin.jsp")})
     public String AddBook(){
         BookProfile build = BookProfile.builder().isbn((long)id).name(bookname).author(author).type(type).price(price).summary(summary).issueOn(LocalDate.now()).build();
         if(asi.addBookProfile(build) == null){
             addActionError("图书已存在，请重新输入图书信息。");
-            return "fall";
+            return "fail";
         }else {
             asi.addBookProfile(build);
             addActionMessage("图书添加成功。");
@@ -86,6 +79,7 @@ public class BookAction extends ActionSupport {
         return "success";
     }
 
+    private String currentType;
     @Action(value = "Main",
             results = @Result(name = "success", type = "dispatcher", location = "/main.jsp"))
     public String execute() {
@@ -104,35 +98,106 @@ public class BookAction extends ActionSupport {
         return asi.findBookByCriteria(new TreeMap<>(), new PageRequest(0, Integer.MAX_VALUE)); // TODO
     }
 
-    public Page<BookProfile> getBookListNovel(){
-        return asi.findBookByCriteria(criteriaOf("type", "小说"), new PageRequest(novelPage, PER_PAGE));
+    private Map<String, Page<BookProfile>> profileByType;
+    public Map<String, Page<BookProfile>> getProfileByType() {
+        if (profileByType == null) {
+            profileByType = new TreeMap<>();
+            List<String> types = asi.findBookByCriteria(new HashMap<>()).stream().map(BookProfile::getType).distinct().collect(Collectors.toList());
+            for (String type : types)
+                profileByType.put(type, asi.findBookByCriteria(criteriaOf("type", type), new PageRequest(getPageOfType().getOrDefault(type, 0), PER_PAGE)));
+        }
+        return profileByType;
     }
 
-    public Page<BookProfile> getBookListPhilosophicalReligion(){
-        return asi.findBookByCriteria(criteriaOf("type", "哲学/宗教"), new PageRequest(PRPage, PER_PAGE));
+    private Map<String, Integer> pageOfType = new TreeMap<>();
+    public Map<String, Integer> getPageOfType() {
+        return new Map<String, Integer>() {
+            @Override
+            public int size() {
+                return pageOfType.size();
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return pageOfType.isEmpty();
+            }
+
+            @Override
+            public boolean containsKey(Object key) {
+                return true;
+            }
+
+            @Override
+            public boolean containsValue(Object value) {
+                return value.equals(0) || pageOfType.containsValue(value);
+            }
+
+            @Override
+            public Integer get(Object key) {
+                return Optional.ofNullable(pageOfType.get(key)).orElse(0);
+            }
+
+            @Override
+            public Integer put(String key, Integer value) {
+                return pageOfType.put(key, value);
+            }
+
+            @Override
+            public Integer remove(Object key) {
+                return pageOfType.remove(key);
+            }
+
+            @Override
+            public void putAll(Map<? extends String, ? extends Integer> m) {
+                pageOfType.putAll(m);
+            }
+
+            @Override
+            public void clear() {
+                pageOfType.clear();
+            }
+
+            @Override
+            public Set<String> keySet() {
+                return pageOfType.keySet();
+            }
+
+            @Override
+            public Collection<Integer> values() {
+                return pageOfType.values();
+            }
+
+            @Override
+            public Set<Entry<String, Integer>> entrySet() {
+                return pageOfType.entrySet();
+            }
+        };
+    }
+    public void setPageOfType(String[] statements) {
+        for (String statement : statements) {
+            int sep = statement.lastIndexOf(',');
+            if (sep == -1) continue;
+
+            String type = statement.substring(0, sep);
+            int page = Integer.parseInt(statement.substring(sep + 1));
+            pageOfType.put(type, page);
+        }
     }
 
-
-    public Page<BookProfile> getBookListScience(){
-        return asi.findBookByCriteria(criteriaOf("type", "科技"), new PageRequest(sciencePage, PER_PAGE));
-    }
-
-    public Page<BookProfile> getBookListTeachingAssistant(){
-        return asi.findBookByCriteria(criteriaOf("type", "外语"), new PageRequest(TAPage, PER_PAGE));
-    }
-
-    public Page<BookProfile> getBookListHistory(){
-        return asi.findBookByCriteria(criteriaOf("type", "历史"), new PageRequest(historyPage, PER_PAGE));
-    }
+    private long bookId;
 
     @Action(value = "BookInformation",
             results = @Result(name = "success", type = "dispatcher", location = "/BookInformation.jsp"))
-    public String executeBookInformation(){return "success";}
-    public BookProfile getBookInformation(){
-        return asi.findBookProfile((int)ActionContext.getContext().get("bookId"));
+    public String executeBookInformation() {
+        return "success";
+    }
+    public BookProfile getBookInfo(){
+        return asi.findBookProfile(bookId);
     }
 
-
+    public long getAvailable() {
+        return getBookInfo().getCopies().stream().filter(copy -> copy.getBorrower() == null).count();
+    }
 
 
 }
