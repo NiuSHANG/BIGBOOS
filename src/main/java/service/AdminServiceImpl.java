@@ -4,6 +4,7 @@ import dao.*;
 import entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class AdminServiceImpl implements AdminService {
     public Borrower findUser(int id) {
         return borrowerRepo.findBorrowerById(id).orElse(null);
     }
+
     @Override
     public Admin findAdmin(int id) {
         return adminRepo.findAdminById(id).orElse(null);
@@ -119,39 +121,59 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean removeAdmin(Admin admin) {
-        adminRepo.delete(admin);
-        return true;
+        try {
+            adminRepo.delete(admin);
+            return true;
+        } catch (DataIntegrityViolationException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean removeUser(Borrower user) {
-        user.getRecords().forEach(record -> { // 归还所有已借图书
-            if (record.getUntil() != null) return;
+        try {
+            user.getRecords().forEach(record -> { // 归还所有已借图书
+                if (record.getUntil() != null) return;
 
-            BookCopy copy = record.getTarget();
-            copy.setBorrower(null);
-            bookCopyRepo.save(copy);
+                BookCopy copy = record.getTarget();
+                copy.setBorrower(null);
+                bookCopyRepo.save(copy);
 
-            record.setUntil(Instant.now());
-            record.setTarget(null);
-            recordRepo.save(record);
-        });
+                record.setUntil(Instant.now());
+                record.setTarget(null);
+                recordRepo.save(record);
+            });
 
-        user.setDeleted(true);
-        borrowerRepo.save(user);
-        return true;
+            user.setDeleted(true);
+            borrowerRepo.save(user);
+            return true;
+        } catch (DataIntegrityViolationException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean removeBookProfile(BookProfile profile) {
-        bookProfileRepo.delete(profile);
-        return true;
+        try {
+            bookProfileRepo.delete(profile);
+            return true;
+        } catch (DataIntegrityViolationException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean removeBookCopy(BookCopy copy) {
-        bookCopyRepo.delete(copy);
-        return true;
+        try {
+            bookCopyRepo.delete(copy);
+            return true;
+        } catch (DataIntegrityViolationException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -176,12 +198,12 @@ public class AdminServiceImpl implements AdminService {
         String appDataFolder = Optional.ofNullable(System.getenv("APPDATA")).orElse(System.getenv("XDG_DATA_HOME"));
         if (appDataFolder == null)
             throw new RuntimeException("Cannot access app data folder! " +
-                                       "Consider executing as admin (Windows) or super user (Linux).");
+                    "Consider executing as admin (Windows) or super user (Linux).");
 
         USER_DIR = Paths.get(appDataFolder, "YCFJ");
         COVER_IMG_DIR = USER_DIR.resolve("upload").resolve("coverImg");
 
-        for (Path path : new Path[] {USER_DIR, COVER_IMG_DIR}) {
+        for (Path path : new Path[]{USER_DIR, COVER_IMG_DIR}) {
             if (!path.toFile().isDirectory() && !path.toFile().mkdirs())
                 throw new RuntimeException("Unable to create resource folder!");
         }
