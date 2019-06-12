@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Optional;
 import java.util.Properties;
 
 @Configuration
@@ -30,10 +31,10 @@ public class HibernateConfig {
     @Profile("!test")
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/test?serverTimezone=GMT%2B8");
-        dataSource.setUsername("root");
-        dataSource.setPassword("123456");
+        dataSource.setDriverClassName(Optional.ofNullable(System.getProperty("db.driver")).orElse("com.mysql.cj.jdbc.Driver"));
+        dataSource.setUrl(Optional.ofNullable(System.getProperty("db.conn_str")).orElse("jdbc:mysql://localhost:3306/test?serverTimezone=GMT%2B8"));
+        dataSource.setUsername(Optional.ofNullable(System.getProperty("db.username")).orElse("root"));
+        dataSource.setPassword(Optional.ofNullable(System.getProperty("db.password")).orElse("123456"));
         return dataSource;
     }
 
@@ -43,7 +44,7 @@ public class HibernateConfig {
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty("hibernate.hibernate.hbm2ddl.auto", "update");
         hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
-        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
+        hibernateProperties.setProperty("hibernate.dialect", Optional.ofNullable(System.getProperty("db.dialect")).orElse("org.hibernate.dialect.MySQL8Dialect"));
         hibernateProperties.setProperty("hibernate.show_sql", "true");
 
         return hibernateProperties;
