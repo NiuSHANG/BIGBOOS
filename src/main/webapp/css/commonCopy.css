@@ -83,20 +83,20 @@ html,body {
 .meun dl {
 	padding: 0 10px;
 }
-.meun-title {
+.nav-group {
 	color: #828e9a;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	font-size: 14px;
 	font-weight: bold;
 }
-.meun-item {
+.nav-switch {
 	line-height: 40px;
 	height: 40px;
 	color: #aab1b7;
 	cursor: pointer;
 }
-.meun-item a {
+.nav-switch a {
 	color: #aab1b7;
 	display: block;
 }
@@ -104,7 +104,7 @@ html,body {
 	color: #c4c7cc;
 	display: block;
 }
-.meun-item img {
+.nav-switch img {
 	padding-right: 8px;
 	height: 20px;
 }
