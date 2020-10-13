@@ -36,7 +36,7 @@
         <version-of-hibernate>5.4.2.Final</version-of-hibernate>
         <version-of-mysql-driver>8.0.16</version-of-mysql-driver>
         <version-of-commons-dbcp2>2.6.0</version-of-commons-dbcp2>
-        <version-of-junit>4.12</version-of-junit>
+        <version-of-junit>4.13.1</version-of-junit>
         <version-of-lombok>1.18.8</version-of-lombok>
         <version-of-slf4j>1.7.26</version-of-slf4j>
     </properties>
