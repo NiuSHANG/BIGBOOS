@@ -32,7 +32,7 @@
     <properties>
         <version-of-spring>4.3.24.RELEASE</version-of-spring>
         <version-of-spring-data>1.11.22.RELEASE</version-of-spring-data>
-        <version-of-struts>2.5.20</version-of-struts>
+        <version-of-struts>2.5.30</version-of-struts>
         <version-of-hibernate>5.4.2.Final</version-of-hibernate>
         <version-of-mysql-driver>8.0.16</version-of-mysql-driver>
         <version-of-commons-dbcp2>2.6.0</version-of-commons-dbcp2>
