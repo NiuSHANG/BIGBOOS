@@ -30,7 +30,7 @@
     </build>
 
     <properties>
-        <version-of-spring>4.3.24.RELEASE</version-of-spring>
+        <version-of-spring>6.0.0</version-of-spring>
         <version-of-spring-data>1.11.22.RELEASE</version-of-spring-data>
         <version-of-struts>2.5.20</version-of-struts>
         <version-of-hibernate>5.4.2.Final</version-of-hibernate>
